@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESOFA & SANCO Game Hub</title>
+    <style>
+        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; }
+        
+        header { width: 100%; padding: 40px 0; background: linear-gradient(to bottom, #1a1a1a, #0a0a0a); text-align: center; border-bottom: 2px solid #d4af37; }
+        h1 { margin: 0; letter-spacing: 5px; color: #d4af37; text-shadow: 0 0 15px rgba(212, 175, 55, 0.5); }
+        
+        .sponsor-hub { background: #151515; border: 1px solid #333; border-radius: 12px; padding: 25px; margin: 30px 0; width: 80%; max-width: 800px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .sponsor-hub h2 { color: #ff0000; margin-top: 0; font-size: 1.2rem; text-transform: uppercase; }
+
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; width: 90%; max-width: 1000px; padding: 20px; }
+        
+        .card { background: #1a1a1a; border: 1px solid #444; border-radius: 10px; overflow: hidden; transition: 0.3s; text-decoration: none; color: white; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-10px); border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
+        
+        .card-img { height: 150px; display: flex; align-items: center; justify-content: center; font-size: 60px; background: #222; }
+        .card-info { padding: 20px; }
+        .card-info h3 { margin: 0; color: #00ffff; }
+        .card-info p { font-size: 14px; color: #aaa; margin: 10px 0 0 0; }
+
+        .btn { display: inline-block; padding: 12px 25px; margin: 10px; border-radius: 5px; font-weight: bold; text-decoration: none; transition: 0.2s; }
+        .yt-btn { background: #ff0000; color: white; }
+        .tip-btn { background: #d4af37; color: #0a0a0a; }
+        .btn:hover { opacity: 0.9; transform: scale(1.05); }
+
+        footer { margin-top: 50px; padding: 20px; color: #555; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>COMMUNITY ARCADE</h1>
+        <p>GAMES • COMMUNITY • ADVENTURE</p>
+    </header>
+
+    <div class="sponsor-hub">
+        <h2>Sponsor Spotlight</h2>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+            <a href="https://www.youtube.com/@SancoOutdoors" target="_blank" class="btn yt-btn">🎬 SUBSCRIBE TO SANCO OUTDOORS</a>
+            <a href="https://www.sanangelogives.org/organization/emmanuelschooloffinearts" target="_blank" class="btn tip-btn">🎻 SUPPORT ESOFA SCHOOL</a>
+        </div>
+        <p style="font-size: 13px; color: #888; margin-top: 15px;">Your play helps support local fine arts and outdoor adventures!</p>
+    </div>
+
+    <div class="game-grid">
+        <a href="https://puppyplaz2019.github.io/The-Racers/" class="card">
+            <div class="card-img" style="background: linear-gradient(45deg, #111, #00ffff33);">🏎️</div>
+            <div class="card-info">
+                <h3>The Racers V112</h3>
+                <p>High-speed 3D oval racing. Scrape the walls to slow down and hit the Nitro to fly!</p>
+            </div>
+        </a>
+
+        <a href="https://puppyplaz2019.github.io/stickman-war/" class="card">
+            <div class="card-img" style="background: linear-gradient(45deg, #111, #ff005533);">🤺</div>
+            <div class="card-info">
+                <h3>Stickman War</h3>
+                <p>2-Player physics-based arena combat. Locked-on fighting with a roofed cage.</p>
+            </div>
+        </a>
+
+        <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" class="card">
+            <div class="card-img" style="background: linear-gradient(45deg, #111, #d4af3733);">🎻</div>
+            <div class="card-info">
+                <h3>Harmony Drop</h3>
+                <p>Merge musical instruments to create the ultimate symphony. Relaxing and addictive.</p>
+            </div>
+        </a>
+    </div>
+
+    <footer>
+        &copy; 2026 ESOFA / SANCO ARCADE HUB
+    </footer>
+
+</body>
+</html>
