@@ -17,6 +17,7 @@
         .card-img { height: 110px; display: flex; align-items: center; justify-content: center; font-size: 45px; background: #222; }
         .card-info { padding: 15px; text-align: center; }
         .card-info h3 { margin: 0; color: #00ffff; font-size: 18px; text-transform: uppercase; }
+        .card-info .note { display: block; margin-top: 8px; font-size: 11px; color: #888; font-style: italic; }
 
         .random-card { border: 2px dashed #ff00ff; }
         .random-card .card-info h3 { color: #ff00ff; }
@@ -76,7 +77,10 @@
 
         <a href="https://puppyplaz2019.github.io/Night_Hunt/" target="_blank" class="card" onclick="track('DeerHunt')">
             <div class="card-img">🔦</div>
-            <div class="card-info"><h3>Sanco's Deer Hunt</h3></div>
+            <div class="card-info">
+                <h3>Sanco's Deer Hunt</h3>
+                <span class="note">Note: mild fantasy violence.</span>
+            </div>
         </a>
 
         <div class="card random-card" onclick="playRandom()">
@@ -88,8 +92,7 @@
     <div class="dashboard">
         <div class="panel">
             <h2>📊 ACTIVITY LOG</h2>
-            <ul class="stats-list" id="stats-display">
-                </ul>
+            <ul class="stats-list" id="stats-display"></ul>
         </div>
 
         <div class="panel">
@@ -132,15 +135,11 @@
         let stats = JSON.parse(localStorage.getItem('arcade_stats') || '{}');
         const display = document.getElementById('stats-display');
         display.innerHTML = '';
-        
-        // Sort games by play count
         const sortedGames = Object.entries(stats).sort((a,b) => b[1] - a[1]);
-
         if (sortedGames.length === 0) {
             display.innerHTML = "<li>Launch a game to see stats!</li>";
             return;
         }
-
         sortedGames.forEach(([name, count]) => {
             const li = document.createElement('li');
             li.innerHTML = `<span>${name}:</span> <b>${count} Plays</b>`;
