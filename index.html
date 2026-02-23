@@ -3,130 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESOFA & SANCO Game Hub</title>
+    <title>ESOFA & SANCO Arcade Hub</title>
     <style>
-        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; }
-        
+        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; }
         header { width: 100%; padding: 40px 0; background: linear-gradient(to bottom, #1a1a1a, #0a0a0a); text-align: center; border-bottom: 2px solid #d4af37; }
         h1 { margin: 0; letter-spacing: 5px; color: #d4af37; text-shadow: 0 0 15px rgba(212, 175, 55, 0.5); }
         
-        .sponsor-hub { background: #151515; border: 1px solid #333; border-radius: 12px; padding: 25px; margin: 30px 0; width: 80%; max-width: 800px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .sponsor-hub h2 { color: #ff0000; margin-top: 0; font-size: 1.2rem; text-transform: uppercase; }
-
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; width: 90%; max-width: 1000px; padding: 20px; }
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 90%; max-width: 1200px; padding: 20px; }
         
-        /* The target="_blank" logic is in the HTML below */
-        .card { background: #1a1a1a; border: 1px solid #444; border-radius: 10px; overflow: hidden; transition: 0.3s; text-decoration: none; color: white; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-10px); border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
+        .card { background: #1a1a1a; border: 1px solid #444; border-radius: 10px; overflow: hidden; transition: 0.3s; text-decoration: none; color: white; display: flex; flex-direction: column; cursor: pointer; }
+        .card:hover { transform: translateY(-5px); border-color: #00ffff; }
         
-        .card-img { height: 120px; display: flex; align-items: center; justify-content: center; font-size: 50px; background: #222; }
-        .card-info { padding: 15px; flex-grow: 1; }
-        .card-info h3 { margin: 0; color: #00ffff; font-size: 18px; }
-        .card-info p { font-size: 13px; color: #aaa; margin: 8px 0 0 0; }
+        .card-img { height: 100px; display: flex; align-items: center; justify-content: center; font-size: 40px; background: #222; }
+        .card-info { padding: 15px; }
+        .card-info h3 { margin: 0; color: #00ffff; font-size: 16px; }
+        
+        .random-card { border-color: #ff00ff; }
+        .random-card h3 { color: #ff00ff; }
 
-        .btn { display: inline-block; padding: 12px 25px; margin: 10px; border-radius: 5px; font-weight: bold; text-decoration: none; transition: 0.2s; }
-        .yt-btn { background: #ff0000; color: white; }
-        .tip-btn { background: #d4af37; color: #0a0a0a; }
-        .btn:hover { opacity: 0.9; transform: scale(1.05); }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        th { border-bottom: 1px solid #444; color: #888; padding: 10px; text-align: left; }
-        td { padding: 10px; border-bottom: 1px solid #222; }
-
-        footer { margin-top: 50px; padding: 20px; color: #555; font-size: 12px; }
+        .sponsor-hub { background: #151515; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0; width: 80%; text-align: center; }
+        .btn { display: inline-block; padding: 10px 20px; margin: 5px; border-radius: 5px; font-weight: bold; text-decoration: none; color: white; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>COMMUNITY ARCADE</h1>
-        <p>GAMES • COMMUNITY • ADVENTURE</p>
-    </header>
+<header>
+    <h1>COMMUNITY ARCADE</h1>
+    <p>CHOOSE YOUR ADVENTURE</p>
+</header>
 
-    <div class="sponsor-hub">
-        <h2>Sponsor Spotlight</h2>
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
-            <a href="https://www.youtube.com/@SancoOutdoors" target="_blank" class="btn yt-btn">🎬 SUB TO SANCO OUTDOORS</a>
-            <a href="https://www.sanangelogives.org/organization/emmanuelschooloffinearts" target="_blank" class="btn tip-btn">🎻 TIP THE SCHOOL</a>
-        </div>
+<div class="sponsor-hub">
+    <a href="https://www.youtube.com/@SancoOutdoors" target="_blank" class="btn" style="background:#ff0000;">🎬 SUB TO SANCO</a>
+    <a href="https://www.sanangelogives.org/organization/emmanuelschooloffinearts" target="_blank" class="btn" style="background:#d4af37; color:black;">🎻 TIP ESOFA</a>
+</div>
+
+<div class="game-grid">
+    <a href="https://puppyplaz2019.github.io/The-Racers/" target="_blank" class="card">
+        <div class="card-img">🏎️</div>
+        <div class="card-info"><h3>The Racers</h3></div>
+    </a>
+
+    <a href="https://puppyplaz2019.github.io/stickman-war/" target="_blank" class="card">
+        <div class="card-img">🤺</div>
+        <div class="card-info"><h3>Stickman War</h3></div>
+    </a>
+
+    <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" target="_blank" class="card">
+        <div class="card-img">🏃</div>
+        <div class="card-info"><h3>Great Escape</h3></div>
+    </a>
+
+    <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" target="_blank" class="card">
+        <div class="card-img">🖱️</div>
+        <div class="card-info"><h3>Harmony Clicker</h3></div>
+    </a>
+
+    <a href="https://puppyplaz2019.github.io/harmony-drop/" target="_blank" class="card">
+        <div class="card-img">🎻</div>
+        <div class="card-info"><h3>Harmony Drop</h3></div>
+    </a>
+
+    <a href="https://puppyplaz2019.github.io/Night_Hunt/" target="_blank" class="card">
+        <div class="card-img">🔦</div>
+        <div class="card-info"><h3>Deer Hunt</h3></div>
+    </a>
+
+    <div class="card random-card" onclick="playRandom()">
+        <div class="card-img">❓</div>
+        <div class="card-info"><h3>Random Game</h3></div>
     </div>
+</div>
 
-    <div class="game-grid">
-        <a href="https://puppyplaz2019.github.io/The-Racers/" target="_blank" class="card">
-            <div class="card-img" style="background: linear-gradient(45deg, #111, #00ffff33);">🏎️</div>
-            <div class="card-info">
-                <h3>The Racers V112</h3>
-                <p>3D high-speed oval racing. Scrape the walls to slow down!</p>
-            </div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/stickman-war/" target="_blank" class="card">
-            <div class="card-img" style="background: linear-gradient(45deg, #111, #ff005533);">🤺</div>
-            <div class="card-info">
-                <h3>Stickman War</h3>
-                <p>Physics-based cage fighting. 2-player arena combat.</p>
-            </div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" target="_blank" class="card">
-            <div class="card-img" style="background: linear-gradient(45deg, #111, #228B2233);">🌲</div>
-            <div class="card-info">
-                <h3>Sanco's Great Escape</h3>
-                <p>Run through the wild, jump trees, and dodge birds.</p>
-            </div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" target="_blank" class="card">
-            <div class="card-img" style="background: linear-gradient(45deg, #111, #ffaa0033);">🖱️</div>
-            <div class="card-info">
-                <h3>Harmony Clicker</h3>
-                <p>Build your musical empire one click at a time.</p>
-            </div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/harmony-drop/" target="_blank" class="card">
-            <div class="card-img" style="background: linear-gradient(45deg, #111, #d4af3733);">🎻</div>
-            <div class="card-info">
-                <h3>Harmony Drop</h3>
-                <p>The original instrument merging puzzle game.</p>
-            </div>
-        </a>
-    </div>
-
-    <div class="sponsor-hub" style="border-color: #32cd32; background: rgba(50, 205, 50, 0.05);">
-        <h2 style="color: #32cd32;">🏆 HALL OF FAME</h2>
-        <table>
-            <tr>
-                <th>GAME</th>
-                <th>CHAMPION</th>
-                <th>RECORD</th>
-            </tr>
-            <tr>
-                <td>The Racers</td>
-                <td style="color: #00ffff;">[CHAMP NAME]</td>
-                <td>--:--.--</td>
-            </tr>
-            <tr>
-                <td>Stickman War</td>
-                <td style="color: #ff4444;">[CHAMP NAME]</td>
-                <td>-- Wins</td>
-            </tr>
-            <tr>
-                <td>Great Escape</td>
-                <td style="color: #228B22;">[CHAMP NAME]</td>
-                <td>-- Meters</td>
-            </tr>
-            <tr>
-                <td>Harmony Drop</td>
-                <td style="color: #d4af37;">[CHAMP NAME]</td>
-                <td>-- Pts</td>
-            </tr>
-        </table>
-    </div>
-
-    <footer>
-        &copy; 2026 ESOFA / SANCO ARCADE HUB
-    </footer>
+<script>
+    function playRandom() {
+        const games = [
+            "https://puppyplaz2019.github.io/The-Racers/",
+            "https://puppyplaz2019.github.io/stickman-war/",
+            "https://puppyplaz2019.github.io/Sancos_Great_Escape/",
+            "https://puppyplaz2019.github.io/Harmony_Clicker/",
+            "https://puppyplaz2019.github.io/harmony-drop/",
+            "https://puppyplaz2019.github.io/Night_Hunt/"
+        ];
+        const randomGame = games[Math.floor(Math.random() * games.length)];
+        window.open(randomGame, '_blank');
+    }
+</script>
 
 </body>
 </html>
