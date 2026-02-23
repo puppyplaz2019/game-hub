@@ -19,12 +19,13 @@
         .card-info h3 { margin: 0; color: #00ffff; font-size: 18px; text-transform: uppercase; }
         .card-info .note { display: block; margin-top: 8px; font-size: 11px; color: #888; font-style: italic; }
 
-        .random-card { border: 2px dashed #ff00ff; }
-        .random-card .card-info h3 { color: #ff00ff; }
-
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; width: 90%; max-width: 1200px; margin: 30px 0; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; width: 90%; max-width: 1200px; margin: 30px 0; }
         .panel { background: #151515; border: 1px solid #333; border-radius: 12px; padding: 20px; }
         .panel h2 { color: #d4af37; margin-top: 0; font-size: 1.2rem; border-bottom: 1px solid #333; padding-bottom: 10px; }
+
+        input, select { width: 100%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box; }
+        .submit-btn { background: #00ffff; color: #000; border: none; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 4px; text-transform: uppercase; }
+        .submit-btn:hover { background: #00cccc; }
 
         .stats-list { list-style: none; padding: 0; margin: 0; }
         .stats-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; color: #aaa; font-family: monospace; }
@@ -34,7 +35,7 @@
         .yt-btn { background: #ff0000; }
         .tip-btn { background: #d4af37; color: #0a0a0a; }
 
-        footer { margin: 40px 0; color: #444; font-size: 12px; }
+        footer { margin: 40px 0; color: #444; font-size: 12px; text-align: center; }
     </style>
 </head>
 <body onload="updateStatsUI()">
@@ -57,7 +58,10 @@
 
         <a href="https://puppyplaz2019.github.io/stickman-war/" target="_blank" class="card" onclick="track('Stickman')">
             <div class="card-img">🤺</div>
-            <div class="card-info"><h3>Stickman War</h3></div>
+            <div class="card-info">
+                <h3>Stickman War</h3>
+                <span class="note">Note: animated combat.</span>
+            </div>
         </a>
 
         <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" target="_blank" class="card" onclick="track('Escape')">
@@ -83,9 +87,9 @@
             </div>
         </a>
 
-        <div class="card random-card" onclick="playRandom()">
+        <div class="card" style="border: 2px dashed #ff00ff;" onclick="playRandom()">
             <div class="card-img">❓</div>
-            <div class="card-info"><h3>Random Game</h3></div>
+            <div class="card-info"><h3 style="color:#ff00ff;">Random Game</h3></div>
         </div>
     </div>
 
@@ -96,12 +100,20 @@
         </div>
 
         <div class="panel">
-            <h2>🏆 HALL OF FAME</h2>
-            <ul class="stats-list">
-                <li><span>The Racers:</span> <b style="color:#d4af37;">[PLAYER]</b></li>
-                <li><span>Stickman War:</span> <b style="color:#d4af37;">[PLAYER]</b></li>
-                <li><span>Deer Hunt:</span> <b style="color:#d4af37;">[PLAYER]</b></li>
-            </ul>
+            <h2>📬 SUBMIT HIGH SCORE</h2>
+            <form action="https://formspree.io/f/YOUR_LINK_HERE" method="POST">
+                <input type="text" name="name" placeholder="Player Name" required>
+                <select name="game">
+                    <option value="Racers">The Racers</option>
+                    <option value="Stickman">Stickman War</option>
+                    <option value="Escape">Sanco's Escape</option>
+                    <option value="Clicker">Harmony Clicker</option>
+                    <option value="Fundraiser">Fundraiser: ESOFA</option>
+                    <option value="DeerHunt">Deer Hunt</option>
+                </select>
+                <input type="number" name="score" placeholder="Enter Score" required>
+                <button type="submit" class="submit-btn">SEND TO OFFICE</button>
+            </form>
         </div>
     </div>
 
