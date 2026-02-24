@@ -3,162 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESOFA & SANCO Arcade Hub</title>
+    <title>Sanco & ESOFA Game Hub</title>
     <style>
-        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; flex-direction: column; align-items: center; }
-        header { width: 100%; padding: 40px 0; background: linear-gradient(to bottom, #1a1a1a, #0a0a0a); text-align: center; border-bottom: 2px solid #d4af37; }
-        h1 { margin: 0; letter-spacing: 5px; color: #d4af37; text-shadow: 0 0 15px rgba(212, 175, 55, 0.5); }
+        :root { --accent: #00ffff; --bg: #0a0a0c; --card: #16161a; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 90%; max-width: 1200px; padding: 20px; }
+        header { padding: 60px 20px; text-align: center; background: linear-gradient(to bottom, #111, var(--bg)); border-bottom: 1px solid #333; }
+        h1 { margin: 0; font-size: 3rem; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; }
+        .subtitle { color: #888; margin-top: 10px; font-size: 1.1rem; }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
         
-        .card { background: #1a1a1a; border: 1px solid #444; border-radius: 10px; overflow: hidden; transition: 0.3s; text-decoration: none; color: white; display: flex; flex-direction: column; cursor: pointer; position: relative; }
-        .card:hover { transform: translateY(-5px); border-color: #00ffff; box-shadow: 0 0 15px rgba(0, 255, 255, 0.2); }
+        /* Grid Layout */
+        .game-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; 
+        }
+
+        .card { 
+            background: var(--card); 
+            border-radius: 15px; 
+            overflow: hidden; 
+            transition: 0.3s; 
+            border: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,255,255,0.1); }
         
-        .card-img { height: 110px; display: flex; align-items: center; justify-content: center; font-size: 45px; background: #222; }
-        .card-info { padding: 15px; text-align: center; }
-        .card-info h3 { margin: 0; color: #00ffff; font-size: 18px; text-transform: uppercase; }
-        .card-info .note { display: block; margin-top: 8px; font-size: 11px; color: #888; font-style: italic; }
+        .card-content { padding: 20px; flex-grow: 1; }
+        .card-content h3 { margin: 0 0 10px 0; color: var(--accent); }
+        .card-content p { color: #aaa; font-size: 0.9rem; line-height: 1.4; }
 
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; width: 90%; max-width: 1200px; margin: 30px 0; }
-        .panel { background: #151515; border: 1px solid #333; border-radius: 12px; padding: 20px; }
-        .panel h2 { color: #d4af37; margin-top: 0; font-size: 1.2rem; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .play-btn { 
+            display: block; width: 100%; padding: 15px; background: var(--accent); 
+            color: #000; text-align: center; font-weight: bold; text-decoration: none;
+            transition: 0.2s;
+        }
+        .play-btn:hover { background: #fff; }
 
-        input, select { width: 100%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box; }
-        .submit-btn { background: #00ffff; color: #000; border: none; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 4px; text-transform: uppercase; }
-        .submit-btn:hover { background: #00cccc; }
+        /* QR Section */
+        .mobile-section {
+            margin-top: 80px;
+            padding: 40px;
+            background: #111;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px dashed #444;
+        }
+        .qr-container {
+            background: white;
+            padding: 15px;
+            display: inline-block;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .qr-container img { display: block; width: 180px; height: 180px; }
 
-        .stats-list { list-style: none; padding: 0; margin: 0; }
-        .stats-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; color: #aaa; font-family: monospace; }
-        .stats-list b { color: #00ffff; }
-
-        .btn { display: inline-block; padding: 12px 25px; margin: 10px; border-radius: 5px; font-weight: bold; text-decoration: none; color: white; transition: 0.2s; }
-        .yt-btn { background: #ff0000; }
-        .tip-btn { background: #d4af37; color: #0a0a0a; }
-
-        footer { margin: 40px 0; color: #444; font-size: 12px; text-align: center; }
+        footer { text-align: center; padding: 40px; color: #555; font-size: 0.8rem; }
     </style>
 </head>
-<body onload="updateStatsUI()">
+<body>
 
-    <header>
-        <h1>COMMUNITY ARCADE</h1>
-        <p>GAMES • COMMUNITY • ADVENTURE</p>
-    </header>
+<header>
+    <h1>The Arcade</h1>
+    <div class="subtitle">Official Sanco Outdoors & ESOFA Game Collection</div>
+</header>
 
-    <div style="text-align:center; margin: 20px;">
-        <a href="https://www.youtube.com/@SancoOutdoors" target="_blank" class="btn yt-btn">🎬 SUB TO SANCO</a>
-        <a href="https://www.sanangelogives.org/organization/emmanuelschooloffinearts" target="_blank" class="btn tip-btn">🎻 TIP ESOFA</a>
-    </div>
-
+<div class="container">
     <div class="game-grid">
-        <a href="https://puppyplaz2019.github.io/The-Racers/" target="_blank" class="card" onclick="track('Racers')">
-            <div class="card-img">🏎️</div>
-            <div class="card-info"><h3>The Racers</h3></div>
-        </a>
+        <div class="card">
+            <div class="card-content">
+                <h3>Sanco's Night Hunt</h3>
+                <p>Tactical deer spotting. Use your thermal scope to tag targets before time runs out.</p>
+            </div>
+            <a href="Night_Hunt/index.html" class="play-btn">DEPLOY</a>
+        </div>
 
-        <a href="https://puppyplaz2019.github.io/stickman-war/" target="_blank" class="card" onclick="track('Stickman')">
-            <div class="card-img">🤺</div>
-            <div class="card-info">
+        <div class="card">
+            <div class="card-content">
+                <h3>The Racers</h3>
+                <p>High-speed friction racing. Master the straights and beat your ghost's best time.</p>
+            </div>
+            <a href="The_Racers/index.html" class="play-btn">IGNITION</a>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h3>Sanco's Great Escape</h3>
+                <p>Survival platforming. Leap over campfires and obstacles to escape the wild.</p>
+            </div>
+            <a href="Great_Escape/index.html" class="play-btn">ESCAPE</a>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
                 <h3>Stickman War</h3>
-                <span class="note">Note: animated combat.</span>
+                <p>Local 1v1 Arena. Two units enter, one unit leaves. Total physics-based combat.</p>
             </div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" target="_blank" class="card" onclick="track('Escape')">
-            <div class="card-img">🏃</div>
-            <div class="card-info"><h3>Sanco's Escape</h3></div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" target="_blank" class="card" onclick="track('Clicker')">
-            <div class="card-img">🖱️</div>
-            <div class="card-info"><h3>Harmony Clicker</h3></div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" target="_blank" class="card" onclick="track('Fundraiser')">
-            <div class="card-img">🎻</div>
-            <div class="card-info"><h3>Fundraiser: ESOFA</h3></div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Night_Hunt/" target="_blank" class="card" onclick="track('DeerHunt')">
-            <div class="card-img">🔦</div>
-            <div class="card-info">
-                <h3>Sanco's Deer Hunt</h3>
-                <span class="note">Note: mild fantasy violence.</span>
-            </div>
-        </a>
-
-        <div class="card" style="border: 2px dashed #ff00ff;" onclick="playRandom()">
-            <div class="card-img">❓</div>
-            <div class="card-info"><h3 style="color:#ff00ff;">Random Game</h3></div>
+            <a href="Stickman_War/index.html" class="play-btn">FIGHT</a>
         </div>
     </div>
 
-    <div class="dashboard">
-        <div class="panel">
-            <h2>📊 ACTIVITY LOG</h2>
-            <ul class="stats-list" id="stats-display"></ul>
+    <div class="mobile-section">
+        <h2 style="margin:0;">Play on Mobile</h2>
+        <p style="color: #888;">Scan this code to take the arcade with you!</p>
+        <div class="qr-container">
+            <script>
+                const yourURL = window.location.href;
+                document.write(`<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(yourURL)}" alt="QR Code">`);
+            </script>
         </div>
-
-        <div class="panel">
-            <h2>📬 SUBMIT HIGH SCORE</h2>
-            <form action="https://formspree.io/f/YOUR_LINK_HERE" method="POST">
-                <input type="text" name="name" placeholder="Player Name" required>
-                <select name="game">
-                    <option value="Racers">The Racers</option>
-                    <option value="Stickman">Stickman War</option>
-                    <option value="Escape">Sanco's Escape</option>
-                    <option value="Clicker">Harmony Clicker</option>
-                    <option value="Fundraiser">Fundraiser: ESOFA</option>
-                    <option value="DeerHunt">Deer Hunt</option>
-                </select>
-                <input type="number" name="score" placeholder="Enter Score" required>
-                <button type="submit" class="submit-btn">SEND TO OFFICE</button>
-            </form>
-        </div>
+        <p style="font-size: 0.8rem; margin-top: 15px; color: var(--accent);">Tip: Tilt your phone sideways for the best experience!</p>
     </div>
+</div>
 
-    <footer>&copy; 2026 ESOFA / SANCO ARCADE</footer>
-
-<script>
-    const gamesList = {
-        'Racers': "https://puppyplaz2019.github.io/The-Racers/",
-        'Stickman': "https://puppyplaz2019.github.io/stickman-war/",
-        'Escape': "https://puppyplaz2019.github.io/Sancos_Great_Escape/",
-        'Clicker': "https://puppyplaz2019.github.io/Harmony_Clicker/",
-        'Fundraiser': "https://puppyplaz2019.github.io/fundraiser_esofa/",
-        'DeerHunt': "https://puppyplaz2019.github.io/Night_Hunt/"
-    };
-
-    function track(gameName) {
-        let stats = JSON.parse(localStorage.getItem('arcade_stats') || '{}');
-        stats[gameName] = (stats[gameName] || 0) + 1;
-        localStorage.setItem('arcade_stats', JSON.stringify(stats));
-        updateStatsUI();
-    }
-
-    function playRandom() {
-        const keys = Object.keys(gamesList);
-        const randomKey = keys[Math.floor(Math.random() * keys.length)];
-        track(randomKey);
-        window.open(gamesList[randomKey], '_blank');
-    }
-
-    function updateStatsUI() {
-        let stats = JSON.parse(localStorage.getItem('arcade_stats') || '{}');
-        const display = document.getElementById('stats-display');
-        display.innerHTML = '';
-        const sortedGames = Object.entries(stats).sort((a,b) => b[1] - a[1]);
-        if (sortedGames.length === 0) {
-            display.innerHTML = "<li>Launch a game to see stats!</li>";
-            return;
-        }
-        sortedGames.forEach(([name, count]) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span>${name}:</span> <b>${count} Plays</b>`;
-            display.appendChild(li);
-        });
-    }
-</script>
+<footer>
+    &copy; 2024 Sanco Outdoors x Emmanuel School of Fine Arts
+</footer>
 
 </body>
 </html>
