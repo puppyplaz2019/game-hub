@@ -3,54 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanco & ESOFA Arcade</title>
+    <title>Sanco x ESOFA Arcade</title>
     <style>
         :root { --accent: #00ffff; --sanco-red: #ff0000; --esofa-gold: #d4af37; --bg: #0a0a0c; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: 'Courier New', monospace; }
-        
         header { padding: 40px 20px; text-align: center; border-bottom: 3px solid var(--accent); background: #000; }
         h1 { margin: 0; font-size: 2.5rem; letter-spacing: 5px; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
-        
         .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
         
         /* Stats Bar */
-        .stats-bar { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; background: #111; padding: 15px; border-radius: 50px; border: 1px solid #333; }
-        .stat-item { font-weight: bold; font-size: 0.9rem; }
+        .stats-bar { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; background: #111; padding: 15px; border-radius: 50px; border: 1px solid #333; flex-wrap: wrap; }
+        .stat-item { font-weight: bold; font-size: 0.9rem; white-space: nowrap; }
         .stat-val { color: var(--accent); }
 
         .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-
-        .card { background: #16161a; border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; transition: 0.3s; }
+        .card { background: #16161a; border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; transition: 0.3s; text-decoration: none; }
         .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        
         .card-content { padding: 20px; flex-grow: 1; }
         .card-content h3 { margin: 0 0 10px 0; color: var(--accent); text-transform: uppercase; }
         .card-content p { color: #aaa; font-size: 0.85rem; line-height: 1.4; }
-
-        .play-btn { display: block; width: 100%; padding: 15px; background: #222; color: var(--accent); text-align: center; font-weight: bold; text-decoration: none; border-top: 1px solid #333; }
-        .play-btn:hover { background: var(--accent); color: #000; }
-
-        /* Sponsor Section */
+        .play-link { display: block; width: 100%; padding: 15px; background: #222; color: var(--accent); text-align: center; font-weight: bold; border-top: 1px solid #333; box-sizing: border-box; }
+        
+        /* Sponsors */
         .sponsor-box { margin-top: 50px; padding: 30px; background: #111; border-radius: 15px; border: 1px solid #333; text-align: center; }
         .sponsor-btns { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
         .s-btn { padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.2s; }
         .s-btn.sanco { background: var(--sanco-red); color: white; }
         .s-btn.esofa { background: var(--esofa-gold); color: black; }
-        .s-btn:hover { opacity: 0.8; transform: scale(1.05); }
 
         /* QR Area */
         .qr-section { margin-top: 40px; padding: 20px; text-align: center; border-top: 1px solid #222; }
         #qr-container { background: white; padding: 10px; display: inline-block; border-radius: 8px; margin: 15px 0; }
         #qr-container img { display: block; width: 140px; height: 140px; }
-
         footer { text-align: center; padding: 40px; color: #444; font-size: 0.7rem; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>THE ARCADE</h1>
-</header>
+<header><h1>THE ARCADE</h1></header>
 
 <div class="container">
     <div class="stats-bar">
@@ -60,61 +50,19 @@
     </div>
 
     <div class="game-grid">
-        <div class="card">
-            <div class="card-content">
-                <h3>Night Hunt</h3>
-                <p>Use your thermal scope to tag targets. Precision and timing required.</p>
-            </div>
-            <a href="night-hunt.html" class="play-btn">LAUNCH SCOPE</a>
-        </div>
-
-        <div class="card">
-            <div class="card-content">
-                <h3>The Racers</h3>
-                <p>Beat the ghost. High-speed precision racing on the open track.</p>
-            </div>
-            <a href="the-racers.html" class="play-btn">START ENGINE</a>
-        </div>
-
-        <div class="card">
-            <div class="card-content">
-                <h3>Sanco's Escape</h3>
-                <p>Survival runner. Jump and dodge to make it through the night.</p>
-            </div>
-            <a href="sancos-escape.html" class="play-btn">ESCAPE</a>
-        </div>
-
-        <div class="card">
-            <div class="card-content">
-                <h3>Stickman War</h3>
-                <p>Physics-based arena combat. Best played 1v1 with a friend.</p>
-            </div>
-            <a href="stickman-war.html" class="play-btn">ENTER ARENA</a>
-        </div>
-
-        <div class="card">
-            <div class="card-content">
-                <h3>Harmony Click</h3>
-                <p>Musical rhythm challenge. Click in sync with the beat.</p>
-            </div>
-            <a href="harmony-click.html" class="play-btn">PLAY BEAT</a>
-        </div>
-
-        <div class="card">
-            <div class="card-content">
-                <h3>Fundraiser ESOFA</h3>
-                <p>Click for a cause. Help reach the donation goal!</p>
-            </div>
-            <a href="fundraiser.html" class="play-btn">SUPPORT ESOFA</a>
-        </div>
+        <a href="https://puppyplaz2019.github.io/Night_Hunt/" class="card"><div class="card-content"><h3>Night Hunt</h3><p>Thermal scope deer spotting. Precision is key.</p></div><div class="play-link">LAUNCH</div></a>
+        <a href="https://puppyplaz2019.github.io/The-Racers/" class="card"><div class="card-content"><h3>The Racers</h3><p>High-speed friction racing. Master the track.</p></div><div class="play-link">DRIVE</div></a>
+        <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" class="card"><div class="card-content"><h3>Sanco's Escape</h3><p>Survival runner. Leap over campfires and obstacles.</p></div><div class="play-link">RUN</div></a>
+        <a href="https://puppyplaz2019.github.io/stickman-war/" class="card"><div class="card-content"><h3>Stickman War</h3><p>Local 1v1 Arena. Physics-based combat.</p></div><div class="play-link">FIGHT</div></a>
+        <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" class="card"><div class="card-content"><h3>Harmony Click</h3><p>Rhythm challenge. Click to the beat.</p></div><div class="play-link">PLAY</div></a>
+        <a href="fundraiser.html" class="card"><div class="card-content"><h3>Fundraiser ESOFA</h3><p>Click to help reach the donation goal.</p></div><div class="play-link">SUPPORT</div></a>
     </div>
 
     <div class="sponsor-box">
-        <h2 style="margin:0; font-size: 1.2rem;">SUPPORT THE CREATORS</h2>
-        <p style="color: #888; font-size: 0.9rem;">The arcade is free, but the mission continues.</p>
+        <h2 style="margin:0;">SUPPORT THE CREATORS</h2>
         <div class="sponsor-btns">
-            <a href="https://www.youtube.com/@SancoOutdoors" target="_blank" class="s-btn sanco">SUB TO SANCO OUTDOORS</a>
-            <a href="https://www.sanangelogives.org/organization/emmanuelschooloffinearts" target="_blank" class="s-btn esofa">DONATE TO ESOFA</a>
+            <a href="https://www.youtube.com/@SancoOutdoors" target="_blank" class="s-btn sanco">SUB TO SANCO</a>
+            <a href="https://www.sanangelogives.org/organization/emmanuelschooloffinearts" target="_blank" class="s-btn esofa">TIP ESOFA</a>
         </div>
     </div>
 
@@ -124,23 +72,18 @@
     </div>
 </div>
 
-<footer>
-    &copy; 2026 SANCO x ESOFA ARCADE
-</footer>
+<footer>&copy; 2026 SANCO x ESOFA</footer>
 
 <script>
-    // Load High Scores from LocalStorage
+    // Sync High Scores
     document.getElementById('hunt-hi').innerText = localStorage.getItem('night_hunt_best') || 0;
     document.getElementById('race-hi').innerText = localStorage.getItem('the_racers_best') || "0.00";
     document.getElementById('escape-hi').innerText = Math.floor((localStorage.getItem('sanco_best') || 0) / 10);
 
-    // QR Code Generation
+    // QR Logic - Using Google Charts API
     const qrContainer = document.getElementById('qr-container');
     const currentUrl = window.location.href;
-    
-    // Using a more reliable secure QR API
-    qrContainer.innerHTML = `<img src="https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=${encodeURIComponent(currentUrl)}" alt="Mobile Link">`;
+    qrContainer.innerHTML = `<img src="https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=${encodeURIComponent(currentUrl)}" alt="QR Code">`;
 </script>
-
 </body>
 </html>
