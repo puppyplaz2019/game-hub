@@ -3,142 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanco & ESOFA Arcade</title>
+    <title>Sanco x ESOFA Arcade</title>
     <style>
-        :root { --accent: #00ffff; --bg: #050508; --card: #111116; }
-        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Courier New', monospace; }
+        :root { --accent: #00ffff; --bg: #050508; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Courier New', monospace; text-align: center; }
+        .container { max-width: 900px; margin: auto; padding: 20px; }
+        h1 { color: var(--accent); letter-spacing: 5px; border-bottom: 2px solid #222; padding-bottom: 10px; }
         
-        header { padding: 50px 20px; text-align: center; border-bottom: 2px solid var(--accent); background: #000; }
-        h1 { margin: 0; font-size: 2.5rem; letter-spacing: 5px; color: var(--accent); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 30px; }
+        .game-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 8px; text-decoration: none; color: #fff; transition: 0.2s; }
+        .game-card:hover { border-color: var(--accent); background: #1a1a1a; }
+        .game-card h3 { margin: 0; color: var(--accent); font-size: 1.1rem; }
 
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        
-        .game-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 20px; 
-        }
-
-        .card { 
-            background: var(--card); 
-            border: 1px solid #333;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            transition: 0.3s;
-        }
-        .card:hover { border-color: var(--accent); transform: scale(1.02); }
-        
-        .card-content { padding: 20px; flex-grow: 1; }
-        .card-content h3 { margin: 0 0 10px 0; color: var(--accent); text-transform: uppercase; }
-        .card-content p { color: #ccc; font-size: 0.9rem; }
-
-        .play-btn { 
-            display: block; width: 100%; padding: 15px; background: #222; 
-            color: var(--accent); text-align: center; font-weight: bold; text-decoration: none;
-            border-top: 1px solid #333; box-sizing: border-box;
-        }
-        .play-btn:hover { background: var(--accent); color: #000; }
-
-        /* QR Section */
-        .mobile-section {
-            margin-top: 60px;
-            padding: 30px;
-            background: #000;
-            border: 2px solid #333;
-            border-radius: 15px;
-            text-align: center;
-        }
-        #qr-code {
-            background: white;
-            padding: 10px;
-            display: inline-block;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-        #qr-code img { display: block; width: 150px; height: 150px; }
-
-        footer { text-align: center; padding: 40px; color: #444; }
+        .qr-area { margin-top: 50px; padding: 20px; background: #000; border: 1px dashed #444; border-radius: 15px; }
+        #qr-container { background: #fff; display: inline-block; padding: 10px; border-radius: 8px; margin: 15px 0; }
+        #qr-container img { display: block; width: 150px; height: 150px; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>THE ARCADE</h1>
-    <p style="color:#888;">SANCO OUTDOORS x ESOFA</p>
-</header>
-
 <div class="container">
-    <div class="game-grid">
-        <div class="card">
-            <div class="card-content">
-                <h3>Night Hunt</h3>
-                <p>Thermal scope deer spotting. Precision is key.</p>
-            </div>
-            <a href="https://puppyplaz2019.github.io/Night_Hunt/" class="play-btn">LAUNCH</a>
-        </div>
+    <h1>THE ARCADE</h1>
 
-        <div class="card">
-            <div class="card-content">
-                <h3>The Racers</h3>
-                <p>High-speed friction racing with ghost laps.</p>
-            </div>
-            <a href="https://puppyplaz2019.github.io/The-Racers/" class="play-btn">DRIVE</a>
-        </div>
-
-        <div class="card">
-            <div class="card-content">
-                <h3>Sanco's Escape</h3>
-                <p>Avoid the campsite obstacles and survive.</p>
-            </div>
-            <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" class="play-btn">RUN</a>
-        </div>
-
-        <div class="card">
-            <div class="card-content">
-                <h3>Stickman War</h3>
-                <p>Local 1v1 combat in the caged arena.</p>
-            </div>
-            <a href="https://puppyplaz2019.github.io/stickman-war/" class="play-btn">FIGHT</a>
-        </div>
-
-        <div class="card">
-            <div class="card-content">
-                <h3>Harmony Click</h3>
-                <p>Test your rhythm and click to the music.</p>
-            </div>
-            <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" class="play-btn">PLAY</a>
-        </div>
-
-        <div class="card">
-            <div class="card-content">
-                <h3>Fundraiser</h3>
-                <p>Help ESOFA reach their goals in this clicking challenge.</p>
-            </div>
-            <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" class="play-btn">SUPPORT</a>
-        </div>
+    <div class="grid">
+        <a href="https://puppyplaz2019.github.io/Night_Hunt/" class="game-card"><h3>NIGHT HUNT</h3></a>
+        <a href="https://puppyplaz2019.github.io/The-Racers/" class="game-card"><h3>THE RACERS</h3></a>
+        <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" class="game-card"><h3>SANCO'S ESCAPE</h3></a>
+        <a href="https://puppyplaz2019.github.io/stickman-war/" class="game-card"><h3>STICKMAN WAR</h3></a>
+        <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" class="game-card"><h3>HARMONY CLICK</h3></a>
+        <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" class="game-card"><h3>FUNDRAISER</h3></a>
     </div>
 
-    <div class="mobile-section">
-        <h2 style="color: var(--accent); margin:0;">SCAN TO PLAY ON MOBILE</h2>
-        <div id="qr-code"></div>
-        <p id="url-text" style="font-size: 0.7rem; color: #555;"></p>
+    <div class="qr-area">
+        <h2 style="margin:0; font-size: 1rem;">SCAN TO PLAY ON PHONE</h2>
+        <div id="qr-container"></div>
+        <p style="font-size: 0.7rem; color: #666;">Note: QR updates automatically when uploaded to GitHub.</p>
     </div>
 </div>
 
-<footer>
-    &copy; 2026 Sanco & ESOFA
-</footer>
-
 <script>
-    // QR Code Generation Fix
-    const currentURL = window.location.href;
-    const qrContainer = document.getElementById('qr-code');
-    const urlDisplay = document.getElementById('url-text');
+    // QR Generator Fix: Forces HTTPS check
+    const qrBox = document.getElementById('qr-container');
+    let siteUrl = window.location.href;
     
-    // Using a reliable QR API
-    qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentURL)}" alt="Game Hub QR">`;
-    urlDisplay.innerText = currentURL;
+    // If you are testing locally, the QR will point to your local file. 
+    // It only works on a phone once the site is LIVE.
+    qrBox.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(siteUrl)}" alt="Arcade QR">`;
 </script>
 
 </body>
