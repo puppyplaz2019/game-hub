@@ -53,7 +53,7 @@
             <div class="skin-item" style="background: #2ecc71;" onclick="buySkin('Green', '#2ecc71', 100)"><span class="price-tag">100 ♪</span></div>
             <div class="skin-item" style="background: #f1c40f;" onclick="buySkin('Gold', '#f1c40f', 500)"><span class="price-tag">500 ♪</span></div>
         </div>
-        <p id="shop-msg" style="font-size: 0.8rem; margin-top: 20px;">Type "sanco" to test skins!</p>
+        <p id="shop-msg" style="font-size: 0.8rem; margin-top: 20px;">Collect ♪ Notes in Sanco's Escape to buy skins!</p>
     </div>
 
     <div class="grid">
@@ -76,14 +76,14 @@
 </div>
 
 <script>
-    // --- CHEAT CODE LOGIC ---
+    // --- HIDDEN CHEAT CODE ---
     let cheatBuffer = "";
     window.addEventListener('keydown', (e) => {
         cheatBuffer += e.key.toLowerCase();
         if (cheatBuffer.includes("sanco")) {
             localStorage.setItem('notes_collected', 9999);
             cheatBuffer = "";
-            document.getElementById('shop-msg').innerText = "CHEAT ACTIVE: +9999 NOTES";
+            document.getElementById('shop-msg').innerText = "UNLOCKED: +9999 NOTES";
             document.getElementById('shop-msg').style.color = "gold";
             syncData();
         }
