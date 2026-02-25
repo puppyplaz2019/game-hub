@@ -18,7 +18,7 @@
         .skin-list { display: flex; gap: 15px; justify-content: center; margin: 15px 0; }
         .skin-item { width: 45px; height: 45px; border-radius: 50%; border: 3px solid #444; cursor: pointer; transition: 0.2s; position: relative; }
         .skin-item:hover { transform: scale(1.1); border-color: var(--accent); }
-        .price-tag { font-size: 10px; position: absolute; bottom: -20px; width: 100%; left: 0; color: #888; }
+        .price-tag { font-size: 10px; position: absolute; bottom: -20px; width: 100%; left: 0; color: #888; text-transform: uppercase; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .card { background: #111; border: 1px solid #333; border-radius: 10px; overflow: hidden; text-decoration: none; color: white; transition: 0.3s; }
@@ -46,14 +46,14 @@
 <div class="container">
     <div class="shop-box">
         <h3 style="margin:0;">COSMETIC SHOP</h3>
-        <p style="color:#777; font-size: 0.8rem;">Unlocked skins apply to Stickman War & Racers!</p>
+        <p style="color:#777; font-size: 0.8rem;">Purchased skins stay unlocked forever!</p>
         <div class="skin-list">
-            <div class="skin-item" style="background: #3498db;" onclick="buySkin('Blue', '#3498db', 0)"><span class="price-tag">FREE</span></div>
-            <div class="skin-item" style="background: #e74c3c;" onclick="buySkin('Red', '#e74c3c', 25)"><span class="price-tag">25 ♪</span></div>
-            <div class="skin-item" style="background: #2ecc71;" onclick="buySkin('Green', '#2ecc71', 100)"><span class="price-tag">100 ♪</span></div>
-            <div class="skin-item" style="background: #f1c40f;" onclick="buySkin('Gold', '#f1c40f', 500)"><span class="price-tag">500 ♪</span></div>
+            <div class="skin-item" style="background: #3498db;" onclick="handleSkin('Blue', '#3498db', 0)"><span class="price-tag" id="tag-Blue">FREE</span></div>
+            <div class="skin-item" style="background: #e74c3c;" onclick="handleSkin('Red', '#e74c3c', 25)"><span class="price-tag" id="tag-Red">25 ♪</span></div>
+            <div class="skin-item" style="background: #2ecc71;" onclick="handleSkin('Green', '#2ecc71', 100)"><span class="price-tag" id="tag-Green">100 ♪</span></div>
+            <div class="skin-item" style="background: #f1c40f;" onclick="handleSkin('Gold', '#f1c40f', 500)"><span class="price-tag" id="tag-Gold">500 ♪</span></div>
         </div>
-        <p id="shop-msg" style="font-size: 0.8rem; margin-top: 20px;">Collect ♪ Notes in Sanco's Escape to buy skins!</p>
+        <p id="shop-msg" style="font-size: 0.8rem; margin-top: 20px;">Collect ♪ Notes in Sanco's Escape!</p>
     </div>
 
     <div class="grid">
@@ -76,47 +76,76 @@
 </div>
 
 <script>
-    // --- HIDDEN CHEAT CODE ---
+    // --- DATA HANDLING ---
+    function getPurchasedSkins() {
+        return JSON.parse(localStorage.getItem('purchased_skins') || '["Blue"]');
+    }
+
+    function syncData() {
+        const notes = parseInt(localStorage.getItem('notes_collected') || 0);
+        const skinName = localStorage.getItem('active_skin_name') || "Blue";
+        const purchased = getPurchasedSkins();
+        
+        document.getElementById('p-notes').innerText = notes;
+        document.getElementById('p-skin').innerText = skinName.toUpperCase();
+
+        // Update tags in shop
+        ['Blue', 'Red', 'Green', 'Gold'].forEach(s => {
+            const tag = document.getElementById('tag-' + s);
+            if (purchased.includes(s)) {
+                tag.innerText = "OWNED";
+                tag.style.color = "var(--accent)";
+            }
+        });
+    }
+
+    function handleSkin(name, color, cost) {
+        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
+        let purchased = getPurchasedSkins();
+
+        // Case 1: Already Own it
+        if (purchased.includes(name)) {
+            equipSkin(name, color);
+            document.getElementById('shop-msg').innerText = name + " Equipped!";
+            return;
+        }
+
+        // Case 2: Buying it
+        if (notes >= cost) {
+            notes -= cost;
+            localStorage.setItem('notes_collected', notes);
+            
+            purchased.push(name);
+            localStorage.setItem('purchased_skins', JSON.stringify(purchased));
+            
+            equipSkin(name, color);
+            document.getElementById('shop-msg').innerText = "Purchased and Equipped " + name + "!";
+        } else {
+            document.getElementById('shop-msg').innerText = "Need " + (cost - notes) + " more ♪ Notes!";
+            document.getElementById('shop-msg').style.color = "red";
+        }
+    }
+
+    function equipSkin(name, color) {
+        localStorage.setItem('active_skin_name', name);
+        localStorage.setItem('active_skin_hex', color);
+        document.getElementById('shop-msg').style.color = color;
+        syncData();
+    }
+
+    // --- SECRET CHEAT ---
     let cheatBuffer = "";
     window.addEventListener('keydown', (e) => {
         cheatBuffer += e.key.toLowerCase();
         if (cheatBuffer.includes("sanco")) {
             localStorage.setItem('notes_collected', 9999);
             cheatBuffer = "";
-            document.getElementById('shop-msg').innerText = "UNLOCKED: +9999 NOTES";
+            document.getElementById('shop-msg').innerText = "SECRET UNLOCKED: +9999 NOTES";
             document.getElementById('shop-msg').style.color = "gold";
             syncData();
         }
         if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
     });
-
-    function syncData() {
-        const name = localStorage.getItem('arcade_name') || "Player_1";
-        const notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        const skin = localStorage.getItem('active_skin_name') || "Default";
-        
-        document.getElementById('p-name').innerText = name;
-        document.getElementById('p-notes').innerText = notes;
-        document.getElementById('p-skin').innerText = skin.toUpperCase();
-    }
-
-    function buySkin(name, color, cost) {
-        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        if (notes >= cost) {
-            if(cost > 0) {
-                notes -= cost;
-                localStorage.setItem('notes_collected', notes);
-            }
-            localStorage.setItem('active_skin_name', name);
-            localStorage.setItem('active_skin_hex', color);
-            document.getElementById('shop-msg').innerText = name + " Skin Equipped!";
-            document.getElementById('shop-msg').style.color = color;
-            syncData();
-        } else {
-            document.getElementById('shop-msg').innerText = "Need more ♪ Notes! Play Sanco's Escape.";
-            document.getElementById('shop-msg').style.color = "red";
-        }
-    }
 
     const qrBox = document.getElementById('qr-code');
     qrBox.innerHTML = `<img src="https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=${encodeURIComponent(window.location.href)}">`;
