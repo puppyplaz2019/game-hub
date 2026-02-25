@@ -37,11 +37,16 @@
         .card-content h3 { margin: 0; color: var(--accent); text-transform: uppercase; }
         .play-btn { background: #222; padding: 12px; text-align: center; font-weight: bold; border-top: 1px solid #333; color: var(--accent); }
 
-        /* New Community Sign Styles */
         .community-sign { margin-top: 50px; padding: 25px; background: #000; border: 2px dashed var(--accent); border-radius: 15px; text-align: center; }
         .community-sign p { margin: 0 0 15px 0; font-weight: bold; line-height: 1.5; color: #fff; }
-        .qr-btn { background: var(--accent); color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 5px; font-family: 'Courier New'; }
-        .qr-btn:hover { background: #fff; }
+        
+        .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .qr-btn, .share-btn { border: none; padding: 12px 20px; font-weight: bold; cursor: pointer; border-radius: 5px; font-family: 'Courier New'; transition: 0.2s; }
+        .qr-btn { background: var(--accent); color: #000; }
+        .share-btn { background: #fff; color: #000; }
+        .qr-btn:hover, .share-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+        .high-score-board { margin-top: 20px; color: var(--esofa-gold); font-size: 0.9rem; border-top: 1px solid #333; padding-top: 10px; }
     </style>
 </head>
 <body>
@@ -69,6 +74,10 @@
         <button id="bundle-btn" class="bundle-btn" onclick="buyBundle()">UNLEASH ALL COLORS (1000 ♪)</button>
         
         <p id="shop-msg" style="font-size: 0.8rem; margin-top: 20px;">Collect ♪ Notes in Sanco's Escape!</p>
+
+        <div class="high-score-board">
+            🏆 BEST ESCAPE: <span id="best-dist">0</span>m
+        </div>
     </div>
 
     <div class="grid">
@@ -83,7 +92,10 @@
     <div class="community-sign">
         <p>If you are playing this, please generate a QR code and/or tell more people about it.<br>
            We would greatly appreciate it!</p>
-        <button class="qr-btn" onclick="window.open('https://www.google.com/search?q=qr+code+generator+for+url', '_blank')">GET QR GENERATOR</button>
+        <div class="btn-group">
+            <button class="qr-btn" onclick="window.open('https://www.google.com/search?q=qr+code+generator+for+url', '_blank')">GET QR GENERATOR</button>
+            <button class="share-btn" id="share-link-btn" onclick="copyArcadeLink()">COPY ARCADE LINK</button>
+        </div>
     </div>
 </div>
 
@@ -98,10 +110,12 @@
     function syncData() {
         const notes = parseInt(localStorage.getItem('notes_collected') || 0);
         const skinName = localStorage.getItem('active_skin_name') || "Blue";
+        const bestScore = parseInt(localStorage.getItem('sanco_best') || 0);
         const purchased = getPurchasedSkins();
         
         document.getElementById('p-notes').innerText = notes;
         document.getElementById('p-skin').innerText = skinName.toUpperCase();
+        document.getElementById('best-dist').innerText = Math.floor(bestScore / 10);
 
         ALL_SKINS.forEach(s => {
             const tag = document.getElementById('tag-' + s);
@@ -163,6 +177,21 @@
         syncData();
     }
 
+    function copyArcadeLink() {
+        const url = window.location.href;
+        const btn = document.getElementById('share-link-btn');
+        navigator.clipboard.writeText(url).then(() => {
+            const originalText = btn.innerText;
+            btn.innerText = "COPIED!";
+            btn.style.background = "var(--accent)";
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.background = "#fff";
+            }, 2000);
+        });
+    }
+
+    // Cheat code: type 'sanco' on keyboard to get max notes
     let cheatBuffer = "";
     window.addEventListener('keydown', (e) => {
         cheatBuffer += e.key.toLowerCase();
