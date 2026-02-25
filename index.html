@@ -19,7 +19,6 @@
         .skin-item { width: 45px; height: 45px; border-radius: 50%; border: 3px solid #444; cursor: pointer; transition: 0.2s; position: relative; }
         .skin-item:hover { transform: scale(1.1); border-color: var(--accent); }
         
-        /* Rainbow Animation */
         @keyframes rainbow { 
             0% { background: red; } 20% { background: orange; } 40% { background: yellow; } 
             60% { background: green; } 80% { background: blue; } 100% { background: red; } 
@@ -38,8 +37,11 @@
         .card-content h3 { margin: 0; color: var(--accent); text-transform: uppercase; }
         .play-btn { background: #222; padding: 12px; text-align: center; font-weight: bold; border-top: 1px solid #333; color: var(--accent); }
 
-        .sponsor-box { margin-top: 40px; padding: 20px; background: #000; border-radius: 15px; text-align: center; border: 1px dashed #444; }
-        .s-btn { display: inline-block; padding: 10px 20px; margin: 5px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        /* New Community Sign Styles */
+        .community-sign { margin-top: 50px; padding: 25px; background: #000; border: 2px dashed var(--accent); border-radius: 15px; text-align: center; }
+        .community-sign p { margin: 0 0 15px 0; font-weight: bold; line-height: 1.5; color: #fff; }
+        .qr-btn { background: var(--accent); color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 5px; font-family: 'Courier New'; }
+        .qr-btn:hover { background: #fff; }
     </style>
 </head>
 <body>
@@ -77,6 +79,12 @@
         <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" class="card"><div class="card-content"><h3>Harmony Click</h3><p>Rhythm challenge.</p></div><div class="play-btn">PLAY</div></a>
         <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" class="card"><div class="card-content"><h3>Fundraiser ESOFA</h3><p>Help reach the goal!</p></div><div class="play-btn">SUPPORT</div></a>
     </div>
+
+    <div class="community-sign">
+        <p>If you are playing this, please generate a QR code and/or tell more people about it.<br>
+           We would greatly appreciate it!</p>
+        <button class="qr-btn" onclick="window.open('https://www.google.com/search?q=qr+code+generator+for+url', '_blank')">GET QR GENERATOR</button>
+    </div>
 </div>
 
 <script>
@@ -103,7 +111,6 @@
             }
         });
 
-        // Disable bundle button if everything is owned
         if (purchased.length >= ALL_SKINS.length) {
             const bBtn = document.getElementById('bundle-btn');
             bBtn.innerText = "ALL SKINS UNLOCKED";
@@ -156,7 +163,6 @@
         syncData();
     }
 
-    // Cheat listener remains
     let cheatBuffer = "";
     window.addEventListener('keydown', (e) => {
         cheatBuffer += e.key.toLowerCase();
