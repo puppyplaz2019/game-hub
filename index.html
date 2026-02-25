@@ -15,10 +15,21 @@
         .stat span { color: var(--accent); }
 
         .shop-box { background: #16161a; border: 2px solid #333; padding: 20px; border-radius: 15px; margin-bottom: 30px; text-align: center; }
-        .skin-list { display: flex; gap: 15px; justify-content: center; margin: 15px 0; }
+        .skin-list { display: flex; gap: 15px; justify-content: center; margin: 15px 0; flex-wrap: wrap; }
         .skin-item { width: 45px; height: 45px; border-radius: 50%; border: 3px solid #444; cursor: pointer; transition: 0.2s; position: relative; }
         .skin-item:hover { transform: scale(1.1); border-color: var(--accent); }
-        .price-tag { font-size: 10px; position: absolute; bottom: -20px; width: 100%; left: 0; color: #888; text-transform: uppercase; }
+        
+        /* Rainbow Animation */
+        @keyframes rainbow { 
+            0% { background: red; } 20% { background: orange; } 40% { background: yellow; } 
+            60% { background: green; } 80% { background: blue; } 100% { background: red; } 
+        }
+        .rainbow-skin { animation: rainbow 2s infinite linear; }
+
+        .price-tag { font-size: 10px; position: absolute; bottom: -20px; width: 100%; left: 0; color: #888; text-transform: uppercase; white-space: nowrap; }
+
+        .bundle-btn { margin-top: 30px; padding: 10px 20px; background: linear-gradient(45deg, #ff0000, #00ffff); border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; font-family: 'Courier New'; }
+        .bundle-btn:disabled { background: #333; cursor: default; opacity: 0.5; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .card { background: #111; border: 1px solid #333; border-radius: 10px; overflow: hidden; text-decoration: none; color: white; transition: 0.3s; }
@@ -29,7 +40,6 @@
 
         .sponsor-box { margin-top: 40px; padding: 20px; background: #000; border-radius: 15px; text-align: center; border: 1px dashed #444; }
         .s-btn { display: inline-block; padding: 10px 20px; margin: 5px; border-radius: 5px; text-decoration: none; font-weight: bold; }
-        .qr-section img { background: white; padding: 5px; border-radius: 5px; margin-top: 10px; width: 120px; }
     </style>
 </head>
 <body>
@@ -46,13 +56,16 @@
 <div class="container">
     <div class="shop-box">
         <h3 style="margin:0;">COSMETIC SHOP</h3>
-        <p style="color:#777; font-size: 0.8rem;">Purchased skins stay unlocked forever!</p>
         <div class="skin-list">
             <div class="skin-item" style="background: #3498db;" onclick="handleSkin('Blue', '#3498db', 0)"><span class="price-tag" id="tag-Blue">FREE</span></div>
             <div class="skin-item" style="background: #e74c3c;" onclick="handleSkin('Red', '#e74c3c', 25)"><span class="price-tag" id="tag-Red">25 ♪</span></div>
             <div class="skin-item" style="background: #2ecc71;" onclick="handleSkin('Green', '#2ecc71', 100)"><span class="price-tag" id="tag-Green">100 ♪</span></div>
             <div class="skin-item" style="background: #f1c40f;" onclick="handleSkin('Gold', '#f1c40f', 500)"><span class="price-tag" id="tag-Gold">500 ♪</span></div>
+            <div class="skin-item rainbow-skin" onclick="handleSkin('Rainbow', 'rainbow', 750)"><span class="price-tag" id="tag-Rainbow">750 ♪</span></div>
         </div>
+        
+        <button id="bundle-btn" class="bundle-btn" onclick="buyBundle()">UNLEASH ALL COLORS (1000 ♪)</button>
+        
         <p id="shop-msg" style="font-size: 0.8rem; margin-top: 20px;">Collect ♪ Notes in Sanco's Escape!</p>
     </div>
 
@@ -64,19 +77,12 @@
         <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" class="card"><div class="card-content"><h3>Harmony Click</h3><p>Rhythm challenge.</p></div><div class="play-btn">PLAY</div></a>
         <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" class="card"><div class="card-content"><h3>Fundraiser ESOFA</h3><p>Help reach the goal!</p></div><div class="play-btn">SUPPORT</div></a>
     </div>
-
-    <div class="sponsor-box">
-        <a href="https://www.youtube.com/@SancoOutdoors" class="s-btn" style="background:var(--sanco-red); color:white;">SUB TO SANCO</a>
-        <a href="https://www.sanangelogives.org/organization/emmanuelschooloffinearts" class="s-btn" style="background:var(--esofa-gold); color:black;">TIP ESOFA</a>
-        <div class="qr-section">
-            <p style="font-size: 0.7rem; color: #555; margin-top: 15px;">SCAN FOR MOBILE ARCADE</p>
-            <div id="qr-code"></div>
-        </div>
-    </div>
 </div>
 
 <script>
-    // --- DATA HANDLING ---
+    const ALL_SKINS = ['Blue', 'Red', 'Green', 'Gold', 'Rainbow'];
+    const SKIN_COLORS = {'Blue': '#3498db', 'Red': '#e74c3c', 'Green': '#2ecc71', 'Gold': '#f1c40f', 'Rainbow': 'rainbow'};
+
     function getPurchasedSkins() {
         return JSON.parse(localStorage.getItem('purchased_skins') || '["Blue"]');
     }
@@ -89,39 +95,55 @@
         document.getElementById('p-notes').innerText = notes;
         document.getElementById('p-skin').innerText = skinName.toUpperCase();
 
-        // Update tags in shop
-        ['Blue', 'Red', 'Green', 'Gold'].forEach(s => {
+        ALL_SKINS.forEach(s => {
             const tag = document.getElementById('tag-' + s);
             if (purchased.includes(s)) {
                 tag.innerText = "OWNED";
                 tag.style.color = "var(--accent)";
             }
         });
+
+        // Disable bundle button if everything is owned
+        if (purchased.length >= ALL_SKINS.length) {
+            const bBtn = document.getElementById('bundle-btn');
+            bBtn.innerText = "ALL SKINS UNLOCKED";
+            bBtn.disabled = true;
+        }
     }
 
     function handleSkin(name, color, cost) {
         let notes = parseInt(localStorage.getItem('notes_collected') || 0);
         let purchased = getPurchasedSkins();
 
-        // Case 1: Already Own it
         if (purchased.includes(name)) {
             equipSkin(name, color);
-            document.getElementById('shop-msg').innerText = name + " Equipped!";
             return;
         }
 
-        // Case 2: Buying it
         if (notes >= cost) {
             notes -= cost;
             localStorage.setItem('notes_collected', notes);
-            
             purchased.push(name);
             localStorage.setItem('purchased_skins', JSON.stringify(purchased));
-            
             equipSkin(name, color);
-            document.getElementById('shop-msg').innerText = "Purchased and Equipped " + name + "!";
+            document.getElementById('shop-msg').innerText = "Purchased " + name + "!";
         } else {
-            document.getElementById('shop-msg').innerText = "Need " + (cost - notes) + " more ♪ Notes!";
+            document.getElementById('shop-msg').innerText = "Need more ♪ Notes!";
+            document.getElementById('shop-msg').style.color = "red";
+        }
+    }
+
+    function buyBundle() {
+        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
+        if (notes >= 1000) {
+            notes -= 1000;
+            localStorage.setItem('notes_collected', notes);
+            localStorage.setItem('purchased_skins', JSON.stringify(ALL_SKINS));
+            document.getElementById('shop-msg').innerText = "ALL COLORS UNLEASHED!";
+            document.getElementById('shop-msg').style.color = "gold";
+            syncData();
+        } else {
+            document.getElementById('shop-msg').innerText = "Need 1000 ♪ for the bundle!";
             document.getElementById('shop-msg').style.color = "red";
         }
     }
@@ -129,26 +151,22 @@
     function equipSkin(name, color) {
         localStorage.setItem('active_skin_name', name);
         localStorage.setItem('active_skin_hex', color);
-        document.getElementById('shop-msg').style.color = color;
+        document.getElementById('shop-msg').innerText = name + " Equipped!";
+        document.getElementById('shop-msg').style.color = (color === 'rainbow' ? 'white' : color);
         syncData();
     }
 
-    // --- SECRET CHEAT ---
+    // Cheat listener remains
     let cheatBuffer = "";
     window.addEventListener('keydown', (e) => {
         cheatBuffer += e.key.toLowerCase();
         if (cheatBuffer.includes("sanco")) {
             localStorage.setItem('notes_collected', 9999);
             cheatBuffer = "";
-            document.getElementById('shop-msg').innerText = "SECRET UNLOCKED: +9999 NOTES";
-            document.getElementById('shop-msg').style.color = "gold";
             syncData();
         }
         if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
     });
-
-    const qrBox = document.getElementById('qr-code');
-    qrBox.innerHTML = `<img src="https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=${encodeURIComponent(window.location.href)}">`;
 
     syncData();
 </script>
