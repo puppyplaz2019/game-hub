@@ -31,11 +31,15 @@
         .bundle-btn:disabled { background: #333; cursor: default; opacity: 0.5; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: #111; border: 1px solid #333; border-radius: 10px; overflow: hidden; text-decoration: none; color: white; transition: 0.3s; }
+        .card { background: #111; border: 1px solid #333; border-radius: 10px; overflow: hidden; text-decoration: none; color: white; transition: 0.3s; position: relative; }
         .card:hover { border-color: var(--accent); transform: translateY(-5px); }
         .card-content { padding: 20px; }
         .card-content h3 { margin: 0; color: var(--accent); text-transform: uppercase; }
         .play-btn { background: #222; padding: 12px; text-align: center; font-weight: bold; border-top: 1px solid #333; color: var(--accent); }
+
+        /* Badge for new games */
+        .new-badge { position: absolute; top: 10px; right: 10px; background: var(--sanco-red); color: white; font-size: 10px; padding: 3px 8px; border-radius: 5px; font-weight: bold; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         .community-sign { margin-top: 50px; padding: 25px; background: #000; border: 2px dashed var(--accent); border-radius: 15px; text-align: center; }
         .community-sign p { margin: 0 0 15px 0; font-weight: bold; line-height: 1.5; color: #fff; }
@@ -44,8 +48,7 @@
         .qr-btn, .share-btn { border: none; padding: 12px 20px; font-weight: bold; cursor: pointer; border-radius: 5px; font-family: 'Courier New'; transition: 0.2s; }
         .qr-btn { background: var(--accent); color: #000; }
         .share-btn { background: #fff; color: #000; }
-        .qr-btn:hover, .share-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
-
+        
         .high-score-board { margin-top: 20px; color: var(--esofa-gold); font-size: 0.9rem; border-top: 1px solid #333; padding-top: 10px; }
     </style>
 </head>
@@ -73,7 +76,7 @@
         
         <button id="bundle-btn" class="bundle-btn" onclick="buyBundle()">UNLEASH ALL COLORS (1000 ♪)</button>
         
-        <p id="shop-msg" style="font-size: 0.8rem; margin-top: 20px;">Collect ♪ Notes in Sanco's Escape!</p>
+        <p id="shop-msg" style="font-size: 0.8rem; margin-top: 20px;">Use ♪ Notes from Escape or Clicker!</p>
 
         <div class="high-score-board">
             🏆 BEST ESCAPE: <span id="best-dist">0</span>m
@@ -81,12 +84,51 @@
     </div>
 
     <div class="grid">
-        <a href="https://puppyplaz2019.github.io/Night_Hunt/" target="_blank" rel="noopener" class="card"><div class="card-content"><h3>Night Hunt</h3><p>Thermal scope spotting.</p></div><div class="play-btn">LAUNCH</div></a>
-        <a href="https://puppyplaz2019.github.io/The-Racers/" target="_blank" rel="noopener" class="card"><div class="card-content"><h3>The Racers</h3><p>High-speed friction racing.</p></div><div class="play-btn">DRIVE</div></a>
-        <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" target="_blank" rel="noopener" class="card"><div class="card-content"><h3>Sanco's Escape</h3><p>Survival runner. Earn ♪ Notes here!</p></div><div class="play-btn">RUN</div></a>
-        <a href="https://puppyplaz2019.github.io/stickman-war/" target="_blank" rel="noopener" class="card"><div class="card-content"><h3>Stickman War</h3><p>1v1 Physics combat.</p></div><div class="play-btn">FIGHT</div></a>
-        <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" target="_blank" rel="noopener" class="card"><div class="card-content"><h3>Harmony Click</h3><p>Rhythm challenge.</p></div><div class="play-btn">PLAY</div></a>
-        <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" target="_blank" rel="noopener" class="card"><div class="card-content"><h3>Fundraiser ESOFA</h3><p>Help reach the goal!</p></div><div class="play-btn">SUPPORT</div></a>
+        <a href="https://puppyplaz2019.github.io/garden-game/index.html" class="card">
+            <div class="new-badge">NEW!</div>
+            <div class="card-content">
+                <h3>Zen Garden</h3>
+                <p>Relax and plant trees with your ♪ Notes.</p>
+            </div>
+            <div class="play-btn">RELAX</div>
+        </a>
+
+        <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" class="card">
+            <div class="new-badge">UPDATED</div>
+            <div class="card-content">
+                <h3>Harmony Clicker</h3>
+                <p>The ultimate ♪ Note generator.</p>
+            </div>
+            <div class="play-btn">PLAY</div>
+        </a>
+
+        <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" class="card">
+            <div class="card-content">
+                <h3>Sanco's Escape</h3>
+                <p>Survival runner. Earn ♪ Notes here!</p>
+            </div>
+            <div class="play-btn">RUN</div>
+        </a>
+
+        <a href="https://puppyplaz2019.github.io/Night_Hunt/" target="_blank" class="card">
+            <div class="card-content"><h3>Night Hunt</h3><p>Thermal scope spotting.</p></div>
+            <div class="play-btn">LAUNCH</div>
+        </a>
+
+        <a href="https://puppyplaz2019.github.io/The-Racers/" target="_blank" class="card">
+            <div class="card-content"><h3>The Racers</h3><p>High-speed friction racing.</p></div>
+            <div class="play-btn">DRIVE</div>
+        </a>
+
+        <a href="https://puppyplaz2019.github.io/stickman-war/" target="_blank" class="card">
+            <div class="card-content"><h3>Stickman War</h3><p>1v1 Physics combat.</p></div>
+            <div class="play-btn">FIGHT</div>
+        </a>
+
+        <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" target="_blank" class="card">
+            <div class="card-content"><h3>Fundraiser ESOFA</h3><p>Help reach the goal!</p></div>
+            <div class="play-btn">SUPPORT</div>
+        </a>
     </div>
 
     <div class="community-sign">
@@ -101,7 +143,6 @@
 
 <script>
     const ALL_SKINS = ['Blue', 'Red', 'Green', 'Gold', 'Rainbow'];
-    const SKIN_COLORS = {'Blue': '#3498db', 'Red': '#e74c3c', 'Green': '#2ecc71', 'Gold': '#f1c40f', 'Rainbow': 'rainbow'};
 
     function getPurchasedSkins() {
         return JSON.parse(localStorage.getItem('purchased_skins') || '["Blue"]');
@@ -181,16 +222,16 @@
         const url = window.location.href;
         const btn = document.getElementById('share-link-btn');
         navigator.clipboard.writeText(url).then(() => {
-            const originalText = btn.innerText;
             btn.innerText = "COPIED!";
             btn.style.background = "var(--accent)";
             setTimeout(() => {
-                btn.innerText = originalText;
+                btn.innerText = "COPY ARCADE LINK";
                 btn.style.background = "#fff";
             }, 2000);
         });
     }
 
+    // Cheat code logic
     let cheatBuffer = "";
     window.addEventListener('keydown', (e) => {
         cheatBuffer += e.key.toLowerCase();
@@ -202,7 +243,10 @@
         if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
     });
 
+    // Run sync on load
     syncData();
+    // Run sync every second just in case player has multiple tabs open
+    setInterval(syncData, 1000);
 </script>
 </body>
 </html>
