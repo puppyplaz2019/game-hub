@@ -49,7 +49,7 @@
         .qr-btn { background: var(--accent); color: #000; }
         .share-btn { background: #fff; color: #000; }
         
-        .high-score-board { margin-top: 20px; color: var(--esofa-gold); font-size: 0.9rem; border-top: 1px solid #333; padding-top: 10px; }
+        .high-score-board { margin-top: 20px; color: var(--esofa-gold); font-size: 0.9rem; border-top: 1px solid #333; padding-top: 10px; display: flex; justify-content: space-around; }
     </style>
 </head>
 <body>
@@ -79,174 +79,10 @@
         <p id="shop-msg" style="font-size: 0.8rem; margin-top: 20px;">Use ♪ Notes from Escape or Clicker!</p>
 
         <div class="high-score-board">
-            🏆 BEST ESCAPE: <span id="best-dist">0</span>m
+            <div>🏆 BEST ESCAPE: <span id="best-dist">0</span>m</div>
+            
         </div>
     </div>
 
-    <div class="grid">
-        <a href="https://puppyplaz2019.github.io/garden-game/index.html" class="card">
-            <div class="new-badge">NEW!</div>
-            <div class="card-content">
-                <h3>Zen Garden</h3>
-                <p>Relax and plant trees with your ♪ Notes.</p>
-            </div>
-            <div class="play-btn">RELAX</div>
-        </a>
 
-        <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" class="card">
-            <div class="new-badge">UPDATED</div>
-            <div class="card-content">
-                <h3>Harmony Clicker</h3>
-                <p>The ultimate ♪ Note generator.</p>
-            </div>
-            <div class="play-btn">PLAY</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" class="card">
-            <div class="card-content">
-                <h3>Sanco's Escape</h3>
-                <p>Survival runner. Earn ♪ Notes here!</p>
-            </div>
-            <div class="play-btn">RUN</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Night_Hunt/" target="_blank" class="card">
-            <div class="card-content"><h3>Night Hunt</h3><p>Thermal scope spotting.</p></div>
-            <div class="play-btn">LAUNCH</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/The-Racers/" target="_blank" class="card">
-            <div class="card-content"><h3>The Racers</h3><p>High-speed friction racing.</p></div>
-            <div class="play-btn">DRIVE</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/stickman-war/" target="_blank" class="card">
-            <div class="card-content"><h3>Stickman War</h3><p>1v1 Physics combat.</p></div>
-            <div class="play-btn">FIGHT</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" target="_blank" class="card">
-            <div class="card-content"><h3>Fundraiser ESOFA</h3><p>Help reach the goal!</p></div>
-            <div class="play-btn">SUPPORT</div>
-        </a>
-    </div>
-
-    <div class="community-sign">
-        <p>If you are playing this, please generate a QR code and/or tell more people about it.<br>
-           We would greatly appreciate it!</p>
-        <div class="btn-group">
-            <button class="qr-btn" onclick="window.open('https://www.google.com/search?q=qr+code+generator+for+url', '_blank')">GET QR GENERATOR</button>
-            <button class="share-btn" id="share-link-btn" onclick="copyArcadeLink()">COPY ARCADE LINK</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    const ALL_SKINS = ['Blue', 'Red', 'Green', 'Gold', 'Rainbow'];
-
-    function getPurchasedSkins() {
-        return JSON.parse(localStorage.getItem('purchased_skins') || '["Blue"]');
-    }
-
-    function syncData() {
-        const notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        const skinName = localStorage.getItem('active_skin_name') || "Blue";
-        const bestScore = parseInt(localStorage.getItem('sanco_best') || 0);
-        const purchased = getPurchasedSkins();
-        
-        document.getElementById('p-notes').innerText = notes;
-        document.getElementById('p-skin').innerText = skinName.toUpperCase();
-        document.getElementById('best-dist').innerText = Math.floor(bestScore / 10);
-
-        ALL_SKINS.forEach(s => {
-            const tag = document.getElementById('tag-' + s);
-            if (purchased.includes(s)) {
-                tag.innerText = "OWNED";
-                tag.style.color = "var(--accent)";
-            }
-        });
-
-        if (purchased.length >= ALL_SKINS.length) {
-            const bBtn = document.getElementById('bundle-btn');
-            bBtn.innerText = "ALL SKINS UNLOCKED";
-            bBtn.disabled = true;
-        }
-    }
-
-    function handleSkin(name, color, cost) {
-        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        let purchased = getPurchasedSkins();
-
-        if (purchased.includes(name)) {
-            equipSkin(name, color);
-            return;
-        }
-
-        if (notes >= cost) {
-            notes -= cost;
-            localStorage.setItem('notes_collected', notes);
-            purchased.push(name);
-            localStorage.setItem('purchased_skins', JSON.stringify(purchased));
-            equipSkin(name, color);
-            document.getElementById('shop-msg').innerText = "Purchased " + name + "!";
-        } else {
-            document.getElementById('shop-msg').innerText = "Need more ♪ Notes!";
-            document.getElementById('shop-msg').style.color = "red";
-        }
-    }
-
-    function buyBundle() {
-        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        if (notes >= 1000) {
-            notes -= 1000;
-            localStorage.setItem('notes_collected', notes);
-            localStorage.setItem('purchased_skins', JSON.stringify(ALL_SKINS));
-            document.getElementById('shop-msg').innerText = "ALL COLORS UNLEASHED!";
-            document.getElementById('shop-msg').style.color = "gold";
-            syncData();
-        } else {
-            document.getElementById('shop-msg').innerText = "Need 1000 ♪ for the bundle!";
-            document.getElementById('shop-msg').style.color = "red";
-        }
-    }
-
-    function equipSkin(name, color) {
-        localStorage.setItem('active_skin_name', name);
-        localStorage.setItem('active_skin_hex', color);
-        document.getElementById('shop-msg').innerText = name + " Equipped!";
-        document.getElementById('shop-msg').style.color = (color === 'rainbow' ? 'white' : color);
-        syncData();
-    }
-
-    function copyArcadeLink() {
-        const url = window.location.href;
-        const btn = document.getElementById('share-link-btn');
-        navigator.clipboard.writeText(url).then(() => {
-            btn.innerText = "COPIED!";
-            btn.style.background = "var(--accent)";
-            setTimeout(() => {
-                btn.innerText = "COPY ARCADE LINK";
-                btn.style.background = "#fff";
-            }, 2000);
-        });
-    }
-
-    // Cheat code logic
-    let cheatBuffer = "";
-    window.addEventListener('keydown', (e) => {
-        cheatBuffer += e.key.toLowerCase();
-        if (cheatBuffer.includes("sanco")) {
-            localStorage.setItem('notes_collected', 999999999999999);
-            cheatBuffer = "";
-            syncData();
-        }
-        if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
-    });
-
-    // Run sync on load
-    syncData();
-    // Run sync every second just in case player has multiple tabs open
-    setInterval(syncData, 1000);
-</script>
-</body>
-</html>
+        <a href="
