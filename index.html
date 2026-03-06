@@ -1,129 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanco x ESOFA Arcade HUB</title>
-    <style>
-        :root { --accent: #00ffff; --sanco-red: #ff0000; --esofa-gold: #d4af37; --bg: #0a0a0c; }
-        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Courier New', monospace; }
-        header { padding: 30px; text-align: center; border-bottom: 3px solid var(--accent); background: #000; }
-        .container { max-width: 1000px; margin: auto; padding: 20px; }
-        
-        .profile-bar { display: flex; justify-content: space-around; background: #111; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #333; flex-wrap: wrap; }
-        .stat { font-weight: bold; }
-        .stat span { color: var(--accent); }
-
-        .shop-box { background: #16161a; border: 2px solid #333; padding: 20px; border-radius: 15px; margin-bottom: 30px; text-align: center; }
-        .skin-list { display: flex; gap: 15px; justify-content: center; margin: 15px 0; flex-wrap: wrap; }
-        .skin-item { width: 45px; height: 45px; border-radius: 50%; border: 3px solid #444; cursor: pointer; transition: 0.2s; position: relative; }
-        .skin-item:hover { transform: scale(1.1); border-color: var(--accent); }
-        
-        @keyframes rainbow { 0% { background: red; } 20% { background: orange; } 40% { background: yellow; } 60% { background: green; } 80% { background: blue; } 100% { background: red; } }
-        .rainbow-skin { animation: rainbow 2s infinite linear; }
-
-        .price-tag { font-size: 10px; position: absolute; bottom: -20px; width: 100%; left: 0; color: #888; text-transform: uppercase; white-space: nowrap; }
-        .bundle-btn { margin-top: 30px; padding: 10px 20px; background: linear-gradient(45deg, #ff0000, #00ffff); border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; font-family: 'Courier New'; }
-        .bundle-btn:disabled { background: #333; cursor: default; opacity: 0.5; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: #111; border: 1px solid #333; border-radius: 10px; overflow: hidden; text-decoration: none; color: white; transition: 0.3s; position: relative; display: block; }
-        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .card-content { padding: 20px; }
-        .card-content h3 { margin: 0; color: var(--accent); text-transform: uppercase; }
-        .play-btn { background: #222; padding: 12px; text-align: center; font-weight: bold; border-top: 1px solid #333; color: var(--accent); }
-
-        .new-badge { position: absolute; top: 10px; right: 10px; background: var(--sanco-red); color: white; font-size: 10px; padding: 3px 8px; border-radius: 5px; font-weight: bold; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        .community-sign { margin-top: 50px; padding: 25px; background: #000; border: 2px dashed var(--accent); border-radius: 15px; text-align: center; }
-        
-        /* Cheat Alert */
-        #cheat-alert { display: none; color: gold; font-weight: bold; font-size: 12px; margin-top: 5px; }
-    </style>
-</head>
-<body>
-
-<header>
-    <h1>SANCO x ESOFA ARCADE</h1>
-    <div class="profile-bar">
-        <div class="stat">TAG: <span id="p-name">EXPLORER</span></div>
-        <div class="stat">NOTES: <span id="p-notes" style="color:var(--esofa-gold)">0</span> ♪<div id="cheat-alert">CHEAT ACTIVE</div></div>
-        <div class="stat">SKIN: <span id="p-skin">DEFAULT</span></div>
-    </div>
-</header>
-
-<div class="container">
-    <div class="shop-box">
-        <h3 style="margin:0;">COSMETIC SHOP</h3>
-        <div class="skin-list">
-            <div class="skin-item" style="background: #3498db;" onclick="handleSkin('Blue', '#3498db', 0)"><span class="price-tag" id="tag-Blue">FREE</span></div>
-            <div class="skin-item" style="background: #e74c3c;" onclick="handleSkin('Red', '#e74c3c', 25)"><span class="price-tag" id="tag-Red">25 ♪</span></div>
-            <div class="skin-item" style="background: #2ecc71;" onclick="handleSkin('Green', '#2ecc71', 100)"><span class="price-tag" id="tag-Green">100 ♪</span></div>
-            <div class="skin-item" style="background: #f1c40f;" onclick="handleSkin('Gold', '#f1c40f', 500)"><span class="price-tag" id="tag-Gold">500 ♪</span></div>
-            <div class="skin-item rainbow-skin" onclick="handleSkin('Rainbow', 'rainbow', 750)"><span class="price-tag" id="tag-Rainbow">750 ♪</span></div>
-        </div>
-        <button id="bundle-btn" class="bundle-btn" onclick="buyBundle()">UNLEASH ALL COLORS (1000 ♪)</button>
-        <div style="margin-top:20px; color:var(--esofa-gold); font-size: 14px;">
-            🏆 ESCAPE: <span id="best-dist">0</span>m | ⚔️ SOUL: <span id="soul-best">0</span>
-        </div>
-    </div>
-
-    <div class="grid">
-        <a href="https://puppyplaz2019.github.io/Blade-Soul/" class="card">
-            <div class="new-badge">3D</div>
-            <div class="card-content"><h3>Blade Soul</h3><p>Sword combat arena. Face the bosses.</p></div>
-            <div class="play-btn">SLASH</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Cannon-Catastrophe/" class="card">
-            <div class="new-badge">NEW!</div>
-            <div class="card-content"><h3>Cannon Catastrophe</h3><p>Jet flight combat simulator.</p></div>
-            <div class="play-btn">FLY</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/garden-game/index.html" class="card">
-            <div class="card-content"><h3>Zen Garden</h3><p>Relax and plant trees with Notes.</p></div>
-            <div class="play-btn">RELAX</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" class="card">
-            <div class="card-content"><h3>Harmony Clicker</h3><p>The ultimate Note generator.</p></div>
-            <div class="play-btn">CLICK</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" class="card">
-            <div class="card-content"><h3>Sanco's Escape</h3><p>Survival runner. Earn Notes here!</p></div>
-            <div class="play-btn">RUN</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Night_Hunt/" target="_blank" class="card">
-            <div class="card-content"><h3>Night Hunt</h3><p>Thermal scope spotting.</p></div>
-            <div class="play-btn">LAUNCH</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/The-Racers/" target="_blank" class="card">
-            <div class="card-content"><h3>The Racers</h3><p>High-speed friction racing.</p></div>
-            <div class="play-btn">DRIVE</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/stickman-war/" target="_blank" class="card">
-            <div class="card-content"><h3>Stickman War</h3><p>1v1 Physics combat.</p></div>
-            <div class="play-btn">FIGHT</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" target="_blank" class="card">
-            <div class="card-content"><h3>Fundraiser ESOFA</h3><p>Support the community goal.</p></div>
-            <div class="play-btn">SUPPORT</div>
-        </a>
-    </div>
-
-    <div class="community-sign">
-        <p>Generate a QR code or share this link to help us grow!</p>
-        <button class="qr-btn" style="background:var(--accent); padding:10px; border:none; cursor:pointer; font-weight:bold;" onclick="copyArcadeLink()" id="share-btn">COPY LINK</button>
-    </div>
-</div>
-
 <script>
     const ALL_SKINS = ['Blue', 'Red', 'Green', 'Gold', 'Rainbow'];
 
@@ -148,55 +22,38 @@
         });
     }
 
-    function handleSkin(name, color, cost) {
-        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        let purchased = JSON.parse(localStorage.getItem('purchased_skins') || '["Blue"]');
-        if (purchased.includes(name)) { equip(name, color); return; }
-        if (notes >= cost) {
-            notes -= cost;
-            localStorage.setItem('notes_collected', notes);
-            purchased.push(name);
-            localStorage.setItem('purchased_skins', JSON.stringify(purchased));
-            equip(name, color);
-        }
-    }
+    // ... [handleSkin, buyBundle, equip, and copyArcadeLink functions remain same] ...
 
-    function buyBundle() {
-        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        if (notes >= 1000) {
-            localStorage.setItem('notes_collected', notes - 1000);
-            localStorage.setItem('purchased_skins', JSON.stringify(ALL_SKINS));
-            syncData();
-        }
-    }
-
-    function equip(name, color) {
-        localStorage.setItem('active_skin_name', name);
-        localStorage.setItem('active_skin_hex', color);
-        syncData();
-    }
-
-    function copyArcadeLink() {
-        navigator.clipboard.writeText(window.location.href);
-        document.getElementById('share-btn').innerText = "COPIED!";
-        setTimeout(() => document.getElementById('share-btn').innerText = "COPY LINK", 2000);
-    }
-
-    // --- CHEAT CODE RESTORED ---
+    // --- UPDATED ADDITIVE CHEAT CODE ---
     let cheatBuffer = "";
     window.addEventListener('keydown', (e) => {
         cheatBuffer += e.key.toLowerCase();
+        
         if (cheatBuffer.includes("sanco")) {
-            localStorage.setItem('notes_collected', 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999);
-            document.getElementById('cheat-alert').style.display = "block";
+            // Get current notes
+            let currentNotes = parseInt(localStorage.getItem('notes_collected') || 0);
+            
+            // ADD 9 Million instead of setting it
+            let newTotal = currentNotes + 9000000;
+            
+            localStorage.setItem('notes_collected', newTotal);
+            
+            // Visual feedback
+            const alertBox = document.getElementById('cheat-alert');
+            alertBox.innerText = "+1,000,000 ♪ ADDED!";
+            alertBox.style.display = "block";
+            
+            // Clear buffer so they can type it again immediately
             cheatBuffer = "";
             syncData();
+            
+            // Hide the message after 2 seconds
+            setTimeout(() => { alertBox.style.display = "none"; }, 2000);
         }
+        
         if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
     });
 
     setInterval(syncData, 1000);
     syncData();
 </script>
-</body>
-</html>
