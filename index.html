@@ -37,6 +37,9 @@
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         .community-sign { margin-top: 50px; padding: 25px; background: #000; border: 2px dashed var(--accent); border-radius: 15px; text-align: center; }
+        
+        /* Cheat Alert */
+        #cheat-alert { display: none; color: gold; font-weight: bold; font-size: 12px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -45,7 +48,7 @@
     <h1>SANCO x ESOFA ARCADE</h1>
     <div class="profile-bar">
         <div class="stat">TAG: <span id="p-name">EXPLORER</span></div>
-        <div class="stat">NOTES: <span id="p-notes" style="color:var(--esofa-gold)">0</span> ♪</div>
+        <div class="stat">NOTES: <span id="p-notes" style="color:var(--esofa-gold)">0</span> ♪<div id="cheat-alert">CHEAT ACTIVE</div></div>
         <div class="stat">SKIN: <span id="p-skin">DEFAULT</span></div>
     </div>
 </header>
@@ -61,7 +64,7 @@
             <div class="skin-item rainbow-skin" onclick="handleSkin('Rainbow', 'rainbow', 750)"><span class="price-tag" id="tag-Rainbow">750 ♪</span></div>
         </div>
         <button id="bundle-btn" class="bundle-btn" onclick="buyBundle()">UNLEASH ALL COLORS (1000 ♪)</button>
-        <div style="margin-top:20px; color:var(--esofa-gold)">
+        <div style="margin-top:20px; color:var(--esofa-gold); font-size: 14px;">
             🏆 ESCAPE: <span id="best-dist">0</span>m | ⚔️ SOUL: <span id="soul-best">0</span>
         </div>
     </div>
@@ -69,7 +72,7 @@
     <div class="grid">
         <a href="https://puppyplaz2019.github.io/Blade-Soul/" class="card">
             <div class="new-badge">3D</div>
-            <div class="card-content"><h3>Blade Soul Infinite</h3><p>Sword combat arena. Face the bosses.</p></div>
+            <div class="card-content"><h3>Blade Soul</h3><p>Sword combat arena. Face the bosses.</p></div>
             <div class="play-btn">SLASH</div>
         </a>
 
@@ -117,21 +120,32 @@
 
     <div class="community-sign">
         <p>Generate a QR code or share this link to help us grow!</p>
-        <button class="qr-btn" style="background:var(--accent); padding:10px; border:none; cursor:pointer;" onclick="copyArcadeLink()" id="share-btn">COPY LINK</button>
+        <button class="qr-btn" style="background:var(--accent); padding:10px; border:none; cursor:pointer; font-weight:bold;" onclick="copyArcadeLink()" id="share-btn">COPY LINK</button>
     </div>
 </div>
 
 <script>
+    const ALL_SKINS = ['Blue', 'Red', 'Green', 'Gold', 'Rainbow'];
+
     function syncData() {
         const notes = parseInt(localStorage.getItem('notes_collected') || 0);
         const skinName = localStorage.getItem('active_skin_name') || "Blue";
         const bestScore = parseInt(localStorage.getItem('sanco_best') || 0);
         const soulBest = localStorage.getItem('soul_best_wave') || 0;
+        const purchased = JSON.parse(localStorage.getItem('purchased_skins') || '["Blue"]');
         
         document.getElementById('p-notes').innerText = notes.toLocaleString();
         document.getElementById('p-skin').innerText = skinName.toUpperCase();
         document.getElementById('best-dist').innerText = Math.floor(bestScore / 10);
         document.getElementById('soul-best').innerText = soulBest;
+
+        ALL_SKINS.forEach(s => {
+            const tag = document.getElementById('tag-' + s);
+            if (purchased.includes(s)) {
+                tag.innerText = "OWNED";
+                tag.style.color = "var(--accent)";
+            }
+        });
     }
 
     function handleSkin(name, color, cost) {
@@ -147,6 +161,15 @@
         }
     }
 
+    function buyBundle() {
+        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
+        if (notes >= 1000) {
+            localStorage.setItem('notes_collected', notes - 1000);
+            localStorage.setItem('purchased_skins', JSON.stringify(ALL_SKINS));
+            syncData();
+        }
+    }
+
     function equip(name, color) {
         localStorage.setItem('active_skin_name', name);
         localStorage.setItem('active_skin_hex', color);
@@ -156,7 +179,21 @@
     function copyArcadeLink() {
         navigator.clipboard.writeText(window.location.href);
         document.getElementById('share-btn').innerText = "COPIED!";
+        setTimeout(() => document.getElementById('share-btn').innerText = "COPY LINK", 2000);
     }
+
+    // --- CHEAT CODE RESTORED ---
+    let cheatBuffer = "";
+    window.addEventListener('keydown', (e) => {
+        cheatBuffer += e.key.toLowerCase();
+        if (cheatBuffer.includes("sanco")) {
+            localStorage.setItem('notes_collected', 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999);
+            document.getElementById('cheat-alert').style.display = "block";
+            cheatBuffer = "";
+            syncData();
+        }
+        if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
+    });
 
     setInterval(syncData, 1000);
     syncData();
