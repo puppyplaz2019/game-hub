@@ -32,6 +32,9 @@
         .card-content h3 { margin: 0; color: var(--accent); text-transform: uppercase; }
         .play-btn { background: #222; padding: 12px; text-align: center; font-weight: bold; border-top: 1px solid #333; color: var(--accent); }
 
+        /* Special Glow for Sole Blade */
+        .sole-glow { box-shadow: 0 0 15px rgba(0, 255, 255, 0.2); border: 1px solid var(--accent); }
+
         .new-badge { position: absolute; top: 10px; right: 10px; background: var(--sanco-red); color: white; font-size: 10px; padding: 3px 8px; border-radius: 5px; font-weight: bold; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
@@ -44,7 +47,7 @@
     <h1>SANCO x ESOFA ARCADE</h1>
     <div class="profile-bar">
         <div class="stat">TAG: <span id="p-name">EXPLORER</span></div>
-        <div class="stat">NOTES: <span id="p-notes" style="color:var(--esofa-gold)">0</span> ♪<div id="cheat-alert">+1,000,000!</div></div>
+        <div class="stat">NOTES: <span id="p-notes" style="color:var(--esofa-gold)">0</span> ♪ <div id="cheat-alert">+1,000,000!</div></div>
         <div class="stat">SKIN: <span id="p-skin">DEFAULT</span></div>
     </div>
 </header>
@@ -66,9 +69,9 @@
     </div>
 
     <div class="grid">
-        <a href="https://puppyplaz2019.github.io/Sole-Blade/" class="card">
+        <a href="https://puppyplaz2019.github.io/sole-blade/" class="card sole-glow">
             <div class="new-badge">REBORN</div>
-            <div class="card-content"><h3>Sole Blade</h3><p>3D Infinite Sword Combat. Forge your legend.</p></div>
+            <div class="card-content"><h3>† Sole Blade</h3><p>3D Infinite Sword Combat. Forge your legend.</p></div>
             <div class="play-btn">SLASH</div>
         </a>
 
@@ -168,23 +171,22 @@
         syncData();
     }
 
-    // --- ADDITIVE CHEAT FIX ---
+    // --- CHEAT CODE: ADDITIVE + RESET BUFFER ---
     let cheatBuffer = "";
     window.addEventListener('keydown', (e) => {
         cheatBuffer += e.key.toLowerCase();
         if (cheatBuffer.includes("sanco")) {
             let current = parseInt(localStorage.getItem('notes_collected') || 0);
-            let newTotal = current + 1000000;
-            localStorage.setItem('notes_collected', newTotal);
+            localStorage.setItem('notes_collected', current + 1000000);
             
-            // UI Feedback
             const alertBox = document.getElementById('cheat-alert');
             alertBox.style.display = "block";
             setTimeout(() => { alertBox.style.display = "none"; }, 2000);
             
-            cheatBuffer = ""; // Reset
+            cheatBuffer = ""; 
             syncData();
         }
+        // Keep buffer short
         if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
     });
 
