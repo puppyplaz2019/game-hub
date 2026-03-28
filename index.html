@@ -2,196 +2,167 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanco x ESOFA Arcade HUB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sanco AR - 5D Final</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --accent: #00ffff; --sanco-red: #ff0000; --esofa-gold: #d4af37; --bg: #0a0a0c; }
-        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Courier New', monospace; overflow-x: hidden; }
-        header { padding: 30px; text-align: center; border-bottom: 3px solid var(--accent); background: #000; }
-        .container { max-width: 1000px; margin: auto; padding: 20px; }
-        
-        .profile-bar { display: flex; justify-content: space-around; background: #111; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #333; flex-wrap: wrap; }
-        .stat { font-weight: bold; }
-        .stat span { color: var(--accent); }
-
-        .shop-box { background: #16161a; border: 2px solid #333; padding: 20px; border-radius: 15px; margin-bottom: 30px; text-align: center; }
-        .skin-list { display: flex; gap: 15px; justify-content: center; margin: 15px 0; flex-wrap: wrap; }
-        .skin-item { width: 45px; height: 45px; border-radius: 50%; border: 3px solid #444; cursor: pointer; transition: 0.2s; position: relative; }
-        .skin-item:hover { transform: scale(1.1); border-color: var(--accent); }
-        
-        @keyframes rainbow { 0% { background: red; } 20% { background: orange; } 40% { background: yellow; } 60% { background: green; } 80% { background: blue; } 100% { background: red; } }
-        .rainbow-skin { animation: rainbow 2s infinite linear; }
-
-        .price-tag { font-size: 10px; position: absolute; bottom: -20px; width: 100%; left: 0; color: #888; text-transform: uppercase; white-space: nowrap; }
-        .bundle-btn { margin-top: 30px; padding: 10px 20px; background: linear-gradient(45deg, #ff0000, #00ffff); border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; font-family: 'Courier New'; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: #111; border: 1px solid #333; border-radius: 10px; overflow: hidden; text-decoration: none; color: white; transition: 0.3s; position: relative; display: block; }
-        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .card-content { padding: 20px; }
-        .card-content h3 { margin: 0; color: var(--accent); text-transform: uppercase; }
-        .play-btn { background: #222; padding: 12px; text-align: center; font-weight: bold; border-top: 1px solid #333; color: var(--accent); }
-
-        /* Special Glow for Sole Blade */
-        .sole-glow { box-shadow: 0 0 15px rgba(0, 255, 255, 0.2); border: 1px solid var(--accent); }
-
-        .new-badge { position: absolute; top: 10px; right: 10px; background: var(--sanco-red); color: white; font-size: 10px; padding: 3px 8px; border-radius: 5px; font-weight: bold; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        #cheat-alert { display: none; color: gold; font-weight: bold; font-size: 14px; margin-top: 5px; text-shadow: 0 0 5px gold; }
+        :root { --gold: #d4af37; --cyan: #00ffff; }
+        body { margin: 0; background: #000; color: #fff; font-family: monospace; overflow: hidden; touch-action: none; }
+        #camera-bg { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; background: #111; }
+        #setup { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .btn { width: 260px; padding: 20px; margin: 10px; border: 2px solid var(--gold); background: #111; color: var(--gold); font-weight: bold; border-radius: 12px; -webkit-appearance: none; font-size: 16px; }
+        #hud { position: absolute; top: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.8); z-index: 10; display: flex; align-items: center; justify-content: space-around; border-bottom: 2px solid var(--gold); }
+        #world { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+        .box { position: absolute; width: 80px; height: 80px; background: gold; border: 2px solid #fff; display: flex; justify-content: center; align-items: center; font-size: 40px; pointer-events: auto; transform: translate(-50%, -50%); border-radius: 10px; box-shadow: 0 0 15px gold; }
+        .box::after { content: '🎁'; }
+        #debug { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #0f0; background: rgba(0,0,0,0.5); padding: 5px; width: 100%; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>SANCO x ESOFA ARCADE</h1>
-    <div class="profile-bar">
-        <div class="stat">TAG: <span id="p-name">EXPLORER</span></div>
-        <div class="stat">NOTES: <span id="p-notes" style="color:var(--esofa-gold)">0</span> ♪ <div id="cheat-alert">+1,000,000!</div></div>
-        <div class="stat">SKIN: <span id="p-skin">DEFAULT</span></div>
-    </div>
-</header>
+<video id="camera-bg" autoplay playsinline muted></video>
 
-<div class="container">
-    <div class="shop-box">
-        <h3 style="margin:0;">COSMETIC SHOP</h3>
-        <div class="skin-list">
-            <div class="skin-item" style="background: #3498db;" onclick="handleSkin('Blue', '#3498db', 0)"><span class="price-tag" id="tag-Blue">FREE</span></div>
-            <div class="skin-item" style="background: #e74c3c;" onclick="handleSkin('Red', '#e74c3c', 25)"><span class="price-tag" id="tag-Red">25 ♪</span></div>
-            <div class="skin-item" style="background: #2ecc71;" onclick="handleSkin('Green', '#2ecc71', 100)"><span class="price-tag" id="tag-Green">100 ♪</span></div>
-            <div class="skin-item" style="background: #f1c40f;" onclick="handleSkin('Gold', '#f1c40f', 500)"><span class="price-tag" id="tag-Gold">500 ♪</span></div>
-            <div class="skin-item rainbow-skin" onclick="handleSkin('Rainbow', 'rainbow', 750)"><span class="price-tag" id="tag-Rainbow">750 ♪</span></div>
-        </div>
-        <button id="bundle-btn" class="bundle-btn" onclick="buyBundle()">UNLEASH ALL COLORS (1000 ♪)</button>
-        <div style="margin-top:20px; color:var(--esofa-gold); font-size: 14px;">
-            🏆 ESCAPE: <span id="best-dist">0</span>m | ⚔️ SOLE POWER: <span id="soul-best">0</span>
-        </div>
-    </div>
-
-    <div class="grid">
-        <a href="https://puppyplaz2019.github.io/sole-blade/" class="card sole-glow">
-            <div class="new-badge">REBORN</div>
-            <div class="card-content"><h3>† Sole Blade</h3><p>3D Infinite Sword Combat. Forge your legend.</p></div>
-            <div class="play-btn">SLASH</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Cannon-Catastrophe/" class="card">
-            <div class="new-badge">NEW!</div>
-            <div class="card-content"><h3>Cannon Catastrophe</h3><p>Jet flight combat simulator. Air superiority.</p></div>
-            <div class="play-btn">FLY</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/garden-game/index.html" class="card">
-            <div class="card-content"><h3>Zen Garden</h3><p>Relax and plant trees with Notes.</p></div>
-            <div class="play-btn">RELAX</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Harmony_Clicker/" class="card">
-            <div class="card-content"><h3>Harmony Clicker</h3><p>The ultimate ♪ Note generator.</p></div>
-            <div class="play-btn">CLICK</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Sancos_Great_Escape/" class="card">
-            <div class="card-content"><h3>Sanco's Escape</h3><p>Survival runner. Earn ♪ Notes here!</p></div>
-            <div class="play-btn">RUN</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/Night_Hunt/" target="_blank" class="card">
-            <div class="card-content"><h3>Night Hunt</h3><p>Thermal scope spotting.</p></div>
-            <div class="play-btn">LAUNCH</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/The-Racers/" target="_blank" class="card">
-            <div class="card-content"><h3>The Racers</h3><p>High-speed friction racing.</p></div>
-            <div class="play-btn">DRIVE</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/stickman-war/" target="_blank" class="card">
-            <div class="card-content"><h3>Stickman War</h3><p>1v1 Physics combat.</p></div>
-            <div class="play-btn">FIGHT</div>
-        </a>
-
-        <a href="https://puppyplaz2019.github.io/fundraiser_esofa/" target="_blank" class="card">
-            <div class="card-content"><h3>Fundraiser ESOFA</h3><p>Support the community goal.</p></div>
-            <div class="play-btn">SUPPORT</div>
-        </a>
-    </div>
+<div id="setup">
+    <h2 style="color:var(--gold)">5-D INTERFACE</h2>
+    <button id="b1" class="btn">1. ENABLE OPTICS</button>
+    <button id="b2" class="btn">2. CALIBRATE SENSORS</button>
+    <button id="bStart" class="btn" style="border-color:#2ecc71; color:#2ecc71; display:none;">START MISSION</button>
 </div>
 
+<div id="hud">
+    <div>UNFOUND: <span id="count" style="color:var(--cyan)">0</span></div>
+    <button id="spawn-btn" style="background:var(--cyan); border:none; padding:10px; border-radius:5px; font-weight:bold; color:#000; display:none;">+ SPAWN BOX</button>
+</div>
+
+<div id="world"></div>
+<div id="debug">Waiting for user...</div>
+
 <script>
-    const ALL_SKINS = ['Blue', 'Red', 'Green', 'Gold', 'Rainbow'];
+    const URL = 'https://tyxezjyjwghgajsilsbg.supabase.co';
+    const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5eGV6anlqd2doZ2Fqc2lsc2JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyNjczODksImV4cCI6MjA4NDg0MzM4OX0.K1elrtEtbsQPTEQNfweLkh7FXq-Er38Oa5aYtqqV65Q';
+    
+    let _sb, myLat = 0, myLon = 0, myHdg = 0, treasures = [], active = false;
 
-    function syncData() {
-        const notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        const skinName = localStorage.getItem('active_skin_name') || "Blue";
-        const bestScore = parseInt(localStorage.getItem('sanco_best') || 0);
-        const soulBest = localStorage.getItem('soul_best_wave') || 0;
-        const purchased = JSON.parse(localStorage.getItem('purchased_skins') || '["Blue"]');
+    // --- BUTTONS ---
+    document.getElementById('b1').onclick = async function() {
+        try {
+            const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            document.getElementById('camera-bg').srcObject = s;
+            this.innerText = "OPTICS OK";
+            this.disabled = true;
+            checkReady();
+        } catch(e) { alert("Camera Error: " + e.message); }
+    };
+
+    document.getElementById('b2').onclick = async function() {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            try {
+                const p = await DeviceOrientationEvent.requestPermission();
+                if (p !== 'granted') alert("Sensor permission denied");
+            } catch(e) { console.log(e); }
+        }
+        window.addEventListener('deviceorientation', function(e) { 
+            myHdg = e.webkitCompassHeading || (360 - e.alpha) || 0; 
+        }, true);
         
-        document.getElementById('p-notes').innerText = notes.toLocaleString();
-        document.getElementById('p-skin').innerText = skinName.toUpperCase();
-        document.getElementById('best-dist').innerText = Math.floor(bestScore / 10);
-        document.getElementById('soul-best').innerText = soulBest;
+        navigator.geolocation.watchPosition(function(p) {
+            myLat = p.coords.latitude;
+            myLon = p.coords.longitude;
+            document.getElementById('debug').innerText = "GPS: " + myLat.toFixed(4) + ", " + myLon.toFixed(4);
+        }, function(e) { alert("GPS Error: " + e.message); }, { enableHighAccuracy: true });
 
-        ALL_SKINS.forEach(s => {
-            const tag = document.getElementById('tag-' + s);
-            if(tag) {
-                if (purchased.includes(s)) {
-                    tag.innerText = "OWNED";
-                    tag.style.color = "var(--accent)";
-                }
-            }
+        this.innerText = "SENSORS OK";
+        this.disabled = true;
+        checkReady();
+    };
+
+    function checkReady() {
+        if(document.getElementById('b1').disabled && document.getElementById('b2').disabled) {
+            document.getElementById('bStart').style.display = "block";
+        }
+    }
+
+    // --- DATABASE ---
+    async function sync() {
+        if (typeof supabase === 'undefined') {
+            alert("Supabase library failed to load. Check internet.");
+            return;
+        }
+        if (!_sb) _sb = supabase.createClient(URL, KEY);
+
+        const result = await _sb.from('treasures').select('*').eq('collected', false);
+        
+        if (result.error) {
+            alert("DB Error: " + result.error.message);
+            return;
+        }
+
+        treasures = result.data || [];
+        document.getElementById('count').innerText = treasures.length;
+        
+        const world = document.getElementById('world');
+        world.innerHTML = '';
+        
+        treasures.forEach(function(item) {
+            const el = document.createElement('div');
+            el.className = 'box';
+            el.dataset.lat = item.lat;
+            el.dataset.lon = item.lon;
+            el.ontouchend = async function(e) {
+                e.preventDefault();
+                await _sb.from('treasures').update({ collected: true }).eq('id', item.id);
+                sync();
+            };
+            world.appendChild(el);
         });
     }
 
-    function handleSkin(name, color, cost) {
-        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        let purchased = JSON.parse(localStorage.getItem('purchased_skins') || '["Blue"]');
-        if (purchased.includes(name)) { equip(name, color); return; }
-        if (notes >= cost) {
-            localStorage.setItem('notes_collected', notes - cost);
-            purchased.push(name);
-            localStorage.setItem('purchased_skins', JSON.stringify(purchased));
-            equip(name, color);
+    // --- SPAWN ---
+    document.getElementById('spawn-btn').onclick = async function() {
+        alert("Attempting to Spawn at: " + myLat + ", " + myLon); // Force feedback
+        if (!_sb) _sb = supabase.createClient(URL, KEY);
+        if (myLat === 0) {
+            alert("Wait for GPS to find your location first!");
+            return;
         }
-    }
-
-    function buyBundle() {
-        let notes = parseInt(localStorage.getItem('notes_collected') || 0);
-        if (notes >= 1000) {
-            localStorage.setItem('notes_collected', notes - 1000);
-            localStorage.setItem('purchased_skins', JSON.stringify(ALL_SKINS));
-            syncData();
+        const response = await _sb.from('treasures').insert([{ lat: myLat, lon: myLon, collected: false }]);
+        if (response.error) alert("Spawn Failed: " + response.error.message);
+        else {
+            alert("Success! Syncing...");
+            sync();
         }
+    };
+
+    document.getElementById('bStart').onclick = function() {
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('spawn-btn').style.display = 'block';
+        active = true;
+        sync();
+        setInterval(sync, 5000);
+        loop();
+    };
+
+    function loop() {
+        if (!active) return;
+        const ww = window.innerWidth, wh = window.innerHeight, fov = ww / 60;
+
+        const worldBoxes = document.querySelectorAll('.box');
+        worldBoxes.forEach(function(t) {
+            const tLat = parseFloat(t.dataset.lat), tLon = parseFloat(t.dataset.lon);
+            const dy = Math.sin((tLon-myLon)*Math.PI/180) * Math.cos(tLat*Math.PI/180);
+            const dx = Math.cos(myLat*Math.PI/180)*Math.sin(tLat*Math.PI/180) - Math.sin(myLat*Math.PI/180)*Math.cos(tLat*Math.PI/180)*Math.cos((tLon-myLon)*Math.PI/180);
+            const bearing = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+
+            let diff = bearing - myHdg;
+            while (diff < -180) diff += 360;
+            while (diff > 180) diff -= 360;
+
+            t.style.left = (ww/2) + (diff * fov) + "px";
+            t.style.top = (wh/2) + "px";
+            t.style.display = Math.abs(diff) > 40 ? 'none' : 'flex';
+        });
+        requestAnimationFrame(loop);
     }
-
-    function equip(name, color) {
-        localStorage.setItem('active_skin_name', name);
-        localStorage.setItem('active_skin_hex', color);
-        syncData();
-    }
-
-    // --- CHEAT CODE: ADDITIVE + RESET BUFFER ---
-    let cheatBuffer = "";
-    window.addEventListener('keydown', (e) => {
-        cheatBuffer += e.key.toLowerCase();
-        if (cheatBuffer.includes("sanco")) {
-            let current = parseInt(localStorage.getItem('notes_collected') || 0);
-            localStorage.setItem('notes_collected', current + 1000000);
-            
-            const alertBox = document.getElementById('cheat-alert');
-            alertBox.style.display = "block";
-            setTimeout(() => { alertBox.style.display = "none"; }, 2000);
-            
-            cheatBuffer = ""; 
-            syncData();
-        }
-        // Keep buffer short
-        if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
-    });
-
-    setInterval(syncData, 1000);
-    syncData();
 </script>
 </body>
 </html>
