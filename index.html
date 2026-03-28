@@ -3,31 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>5-D TREASURE HUNT | PRO-EDITION</title>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <title>5-D TREASURE HUNT | LEGACY</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2.0.0/dist/umd/supabase.js"></script>
     <style>
-        :root { --gold: #d4af37; --cyan: #00ffff; --bg: #0a0a0a; }
-        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Courier New', monospace; overflow: hidden; touch-action: none; -webkit-user-select: none; }
-        
-        /* Layer 1: The Camera (Back) */
-        #camera-bg { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; background: #000; }
-        
-        /* Layer 2: The AR World (Middle) */
+        body { margin: 0; background: #000; color: #fff; font-family: monospace; overflow: hidden; }
+        #setup { position: fixed; inset: 0; background: #000; z-index: 100; text-align: center; padding-top: 50px; }
+        .btn { width: 80%; padding: 20px; margin: 10px; border: 2px solid #d4af37; background: #111; color: #d4af37; font-weight: bold; font-size: 16px; border-radius: 10px; }
+        #hud { position: fixed; top: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.8); z-index: 50; display: none; align-items: center; justify-content: space-around; border-bottom: 1px solid #d4af37; }
         #world { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
-        .box { position: absolute; width: 100px; height: 100px; background: gold; border: 4px solid #fff; display: flex; justify-content: center; align-items: center; font-size: 50px; pointer-events: auto; transform: translate(-50%, -50%); border-radius: 15px; box-shadow: 0 0 30px gold; z-index: 6; }
-        .box::after { content: '🎁'; }
-
-        /* Layer 3: The UI / HUD (Front) */
-        #hud { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(0,0,0,0.8); z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 2px solid var(--gold); box-sizing: border-box; pointer-events: auto; }
-        
-        /* Layer 4: Setup Screen (Front-most) */
-        #setup { position: fixed; inset: 0; background: #000; z-index: 200; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        
-        .btn { width: 280px; padding: 22px; margin: 12px; border: 2px solid var(--gold); background: #111; color: var(--gold); font-weight: bold; border-radius: 15px; font-size: 18px; -webkit-appearance: none; cursor: pointer; }
-        .btn:active { background: var(--gold); color: #000; }
-        
-        #spawn-btn { background: var(--cyan); color: #000; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; font-size: 16px; -webkit-appearance: none; pointer-events: auto; }
-        #debug { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 11px; color: #0f0; background: rgba(0,0,0,0.7); padding: 8px; z-index: 150; }
+        .box { position: absolute; width: 80px; height: 80px; background: gold; border: 2px solid #fff; display: flex; justify-content: center; align-items: center; font-size: 40px; border-radius: 10px; transform: translate(-50%, -50%); }
+        .box:after { content: '🎁'; }
+        #camera-bg { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        #debug { position: fixed; bottom: 0; width: 100%; font-size: 10px; color: #0f0; background: rgba(0,0,0,0.5); text-align: center; z-index: 60; padding: 5px; }
     </style>
 </head>
 <body>
@@ -35,127 +22,126 @@
 <video id="camera-bg" autoplay playsinline muted></video>
 
 <div id="setup">
-    <h1 style="color:var(--gold); margin-bottom:30px;">5-D SYSTEM BOOT</h1>
-    <button id="b1" class="btn" onclick="startCamera()">[1] ACCESS OPTICS</button>
-    <button id="b2" class="btn" onclick="startSensors()">[2] SYNC SENSORS</button>
-    <button id="bStart" class="btn" style="border-color:#0f0; color:#0f0; display:none;" onclick="enterGame()">[3] ENTER DIMENSION</button>
+    <h1 style="color:#d4af37">5-D BOOT (LEGACY)</h1>
+    <button id="b1" class="btn" onclick="fnCam()">1. CAMERA</button>
+    <button id="b2" class="btn" onclick="fnSens()">2. SENSORS</button>
+    <button id="bStart" class="btn" style="display:none; border-color:#0f0; color:#0f0;" onclick="fnStart()">3. START</button>
 </div>
 
-<div id="hud" style="display:none;">
-    <div style="font-size:18px;">ITEMS: <span id="count" style="color:var(--cyan)">0</span></div>
-    <button id="spawn-btn" onclick="manualSpawn()">+ DROP BOX</button>
+<div id="hud">
+    <div>FOUND: <span id="count" style="color:#0ff">0</span></div>
+    <button id="spawn-btn" style="background:#0ff; border:none; padding:10px; font-weight:bold;" onclick="fnSpawn()">+ SPAWN</button>
 </div>
 
 <div id="world"></div>
-<div id="debug">System Ready</div>
+<div id="debug">Awaiting Setup...</div>
 
 <script>
-    // Wednesday Release Shield: Catch all errors
-    window.onerror = function(m, u, l) { alert("SYSTEM CRITICAL: " + m + "\nLine: " + l); };
+    // Global Error Alert for Old Safari
+    window.onerror = function(m, u, l) { alert("Line " + l + ": " + m); };
 
     var URL = 'https://tyxezjyjwghgajsilsbg.supabase.co';
     var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5eGV6anlqd2doZ2Fqc2lsc2JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyNjczODksImV4cCI6MjA4NDg0MzM4OX0.K1elrtEtbsQPTEQNfweLkh7FXq-Er38Oa5aYtqqV65Q';
     
     var _sb, myLat = 0, myLon = 0, myHdg = 0, treasures = [], active = false;
 
-    function startCamera() {
+    function fnCam() {
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
         .then(function(s) {
             document.getElementById('camera-bg').srcObject = s;
             document.getElementById('b1').style.background = "#030";
-            document.getElementById('b1').innerText = "OPTICS ONLINE";
-            checkReady();
-        }).catch(function(e) { alert("Camera Error: Check iPad Settings > Safari"); });
+            document.getElementById('b1').innerText = "CAM OK";
+            fnCheck();
+        });
     }
 
-    function startSensors() {
-        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    function fnSens() {
+        if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) {
             DeviceOrientationEvent.requestPermission();
         }
-        window.addEventListener('deviceorientation', function(e) { 
-            myHdg = e.webkitCompassHeading || (360 - e.alpha) || 0; 
+        window.addEventListener('deviceorientation', function(e) {
+            myHdg = e.webkitCompassHeading || (360 - e.alpha) || 0;
         }, true);
-        
+
         navigator.geolocation.watchPosition(function(p) {
-            myLat = p.coords.latitude; myLon = p.coords.longitude;
-            document.getElementById('debug').innerText = "GPS STABLE: " + myLat.toFixed(5) + ", " + myLon.toFixed(5);
-        }, null, { enableHighAccuracy: true });
+            myLat = p.coords.latitude;
+            myLon = p.coords.longitude;
+            document.getElementById('debug').innerText = "GPS: " + myLat.toFixed(4) + ", " + myLon.toFixed(4);
+        }, function(e) { alert("GPS Error: " + e.message); }, { enableHighAccuracy: true });
 
         document.getElementById('b2').style.background = "#030";
-        document.getElementById('b2').innerText = "SENSORS SYNCED";
-        checkReady();
+        document.getElementById('b2').innerText = "SENSORS OK";
+        fnCheck();
     }
 
-    function checkReady() {
-        // If both buttons were pressed, show start
-        if(document.getElementById('b1').innerText.includes("ONLINE") && 
-           document.getElementById('b2').innerText.includes("SYNCED")) {
+    function fnCheck() {
+        if (document.getElementById('b1').innerText === "CAM OK" && document.getElementById('b2').innerText === "SENSORS OK") {
             document.getElementById('bStart').style.display = "block";
         }
     }
 
-    function enterGame() {
+    function fnSync() {
+        if (!_sb) _sb = supabase.createClient(URL, KEY);
+        _sb.from('treasures').select('*').eq('collected', false)
+        .then(function(res) {
+            if (res.error) return;
+            treasures = res.data || [];
+            document.getElementById('count').innerText = treasures.length;
+            var w = document.getElementById('world');
+            w.innerHTML = '';
+            for (var i = 0; i < treasures.length; i++) {
+                var item = treasures[i];
+                var el = document.createElement('div');
+                el.className = 'box';
+                el.style.left = "-1000px"; // Hide until loop calculates
+                el.setAttribute('data-lat', item.lat);
+                el.setAttribute('data-lon', item.lon);
+                w.appendChild(el);
+            }
+        });
+    }
+
+    function fnSpawn() {
+        if (myLat === 0) { alert("Wait for GPS..."); return; }
+        alert("TRANSMITTING...");
+        _sb.from('treasures').insert([{ lat: myLat, lon: myLon, collected: false }])
+        .then(function(res) {
+            if (res.error) alert("Error: " + res.error.message);
+            else { alert("SUCCESS!"); fnSync(); }
+        });
+    }
+
+    function fnStart() {
         document.getElementById('setup').style.display = 'none';
         document.getElementById('hud').style.display = 'flex';
         active = true;
-        _sb = supabase.createClient(URL, KEY);
-        sync();
-        setInterval(sync, 4000); // Auto-sync every 4 seconds
-        loop();
+        fnSync();
+        setInterval(fnSync, 5000);
+        fnLoop();
     }
 
-    function sync() {
-        if (!_sb) return;
-        _sb.from('treasures').select('*').eq('collected', false).then(function(res) {
-            if (res.error) { document.getElementById('debug').innerText = "Sync Error: " + res.error.message; return; }
-            treasures = res.data || [];
-            document.getElementById('count').innerText = treasures.length;
-            
-            var world = document.getElementById('world');
-            world.innerHTML = '';
-            treasures.forEach(function(item) {
-                var el = document.createElement('div');
-                el.className = 'box';
-                el.dataset.lat = item.lat; el.dataset.lon = item.lon;
-                el.onclick = function() { 
-                    this.style.transform = "scale(0)";
-                    _sb.from('treasures').update({ collected: true }).eq('id', item.id).then(sync); 
-                };
-                world.appendChild(el);
-            });
-        });
-    }
-
-    function manualSpawn() {
-        if (myLat === 0) { alert("GPS Signal too weak!"); return; }
-        
-        // This is the big one - Forced Alert
-        alert("TRANSMITTING TO 5-D CLOUD...");
-
-        _sb.from('treasures').insert([{ lat: myLat, lon: myLon, collected: false }])
-        .then(function(res) {
-            if (res.error) alert("Database Rejected Insert: " + res.error.message);
-            else { alert("Treasure Physicalized!"); sync(); }
-        }).catch(function(e) { alert("App Crash: " + e.message); });
-    }
-
-    function loop() {
+    function fnLoop() {
         if (!active) return;
         var ww = window.innerWidth, wh = window.innerHeight, fov = ww / 60;
-        var worldBoxes = document.querySelectorAll('.box');
-        worldBoxes.forEach(function(t) {
-            var tLat = parseFloat(t.dataset.lat), tLon = parseFloat(t.dataset.lon);
+        var boxes = document.getElementsByClassName('box');
+        for (var i = 0; i < boxes.length; i++) {
+            var t = boxes[i];
+            var tLat = parseFloat(t.getAttribute('data-lat'));
+            var tLon = parseFloat(t.getAttribute('data-lon'));
+            
             var dy = Math.sin((tLon-myLon)*Math.PI/180) * Math.cos(tLat*Math.PI/180);
             var dx = Math.cos(myLat*Math.PI/180)*Math.sin(tLat*Math.PI/180) - Math.sin(myLat*Math.PI/180)*Math.cos(tLat*Math.PI/180)*Math.cos((tLon-myLon)*Math.PI/180);
             var bearing = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+
             var diff = bearing - myHdg;
             while (diff < -180) diff += 360;
             while (diff > 180) diff -= 360;
+
             t.style.left = (ww/2) + (diff * fov) + "px";
             t.style.top = (wh/2) + "px";
-            t.style.display = Math.abs(diff) > 45 ? 'none' : 'flex';
-        });
-        requestAnimationFrame(loop);
+            t.style.display = Math.abs(diff) > 40 ? 'none' : 'flex';
+        }
+        requestAnimationFrame(fnLoop);
     }
 </script>
 </body>
