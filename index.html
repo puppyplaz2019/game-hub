@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sanco AR - 5D Final</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Sanco AR - 5D Legacy</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         :root { --gold: #d4af37; --cyan: #00ffff; }
         body { margin: 0; background: #000; color: #fff; font-family: monospace; overflow: hidden; touch-action: none; -webkit-user-select: none; }
@@ -15,6 +15,7 @@
         #world { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
         .box { position: absolute; width: 80px; height: 80px; background: gold; border: 2px solid #fff; display: flex; justify-content: center; align-items: center; font-size: 40px; pointer-events: auto; transform: translate(-50%, -50%); border-radius: 10px; box-shadow: 0 0 15px gold; }
         .box::after { content: '🎁'; }
+        .spawn-zone { background: var(--cyan); padding: 15px; border-radius: 10px; color: #000; font-weight: bold; cursor: pointer; display: none; z-index: 20; -webkit-tap-highlight-color: transparent; }
         #debug { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #0f0; background: rgba(0,0,0,0.5); padding: 5px; }
     </style>
 </head>
@@ -31,46 +32,45 @@
 
 <div id="hud">
     <div>UNFOUND: <span id="count" style="color:var(--cyan)">0</span></div>
-    <div id="spawn-btn" style="background:var(--cyan); padding:10px; border-radius:5px; font-weight:bold; color:#000; display:none;">+ SPAWN BOX</div>
+    <div id="spawn-btn" class="spawn-zone" onclick="doSpawn()">+ SPAWN BOX</div>
 </div>
 
 <div id="world"></div>
-<div id="debug">Waiting for system...</div>
+<div id="debug">System Initialization...</div>
 
 <script>
-    // IPAD ERROR CATCHER
-    window.onerror = function(msg) { alert("iPad System Error: " + msg); };
+    // Global Error Trap
+    window.onerror = function(m, u, l) { alert("Error: " + m + " line " + l); };
 
-    const URL = 'https://tyxezjyjwghgajsilsbg.supabase.co';
-    const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5eGV6anlqd2doZ2Fqc2lsc2JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyNjczODksImV4cCI6MjA4NDg0MzM4OX0.K1elrtEtbsQPTEQNfweLkh7FXq-Er38Oa5aYtqqV65Q';
+    var URL = 'https://tyxezjyjwghgajsilsbg.supabase.co';
+    var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5eGV6anlqd2doZ2Fqc2lsc2JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyNjczODksImV4cCI6MjA4NDg0MzM4OX0.K1elrtEtbsQPTEQNfweLkh7FXq-Er38Oa5aYtqqV65Q';
     
-    let _sb, myLat = 0, myLon = 0, myHdg = 0, treasures = [], active = false;
+    var _sb, myLat = 0, myLon = 0, myHdg = 0, treasures = [], active = false;
 
-    // --- BUTTONS ---
-    document.getElementById('b1').onclick = async function() {
-        const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-        document.getElementById('camera-bg').srcObject = s;
-        this.innerText = "OPTICS OK";
-        this.disabled = true;
-        checkReady();
+    // --- SETUP STEPS ---
+    document.getElementById('b1').onclick = function() {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        .then(function(s) {
+            document.getElementById('camera-bg').srcObject = s;
+            document.getElementById('b1').disabled = true;
+            document.getElementById('b1').innerText = "OPTICS OK";
+            checkReady();
+        }).catch(function(e) { alert("Camera Error: " + e); });
     };
 
-    document.getElementById('b2').onclick = async function() {
+    document.getElementById('b2').onclick = function() {
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            await DeviceOrientationEvent.requestPermission();
+            DeviceOrientationEvent.requestPermission();
         }
         window.addEventListener('deviceorientation', function(e) { 
             myHdg = e.webkitCompassHeading || (360 - e.alpha) || 0; 
         }, true);
-        
         navigator.geolocation.watchPosition(function(p) {
-            myLat = p.coords.latitude;
-            myLon = p.coords.longitude;
-            document.getElementById('debug').innerText = "GPS ACTIVE: " + myLat.toFixed(5) + ", " + myLon.toFixed(5);
+            myLat = p.coords.latitude; myLon = p.coords.longitude;
+            document.getElementById('debug').innerText = "GPS: " + myLat.toFixed(5) + ", " + myLon.toFixed(5);
         }, null, { enableHighAccuracy: true });
-
-        this.innerText = "SENSORS OK";
-        this.disabled = true;
+        document.getElementById('b2').disabled = true;
+        document.getElementById('b2').innerText = "SENSORS OK";
         checkReady();
     };
 
@@ -80,43 +80,36 @@
         }
     }
 
-    // --- DATABASE ---
-    async function sync() {
+    // --- DATABASE SYNC ---
+    function sync() {
         if (!_sb) _sb = supabase.createClient(URL, KEY);
-        const res = await _sb.from('treasures').select('*').eq('collected', false);
-        if (res.error) { alert("DB Error: " + res.error.message); return; }
-        
-        treasures = res.data || [];
-        document.getElementById('count').innerText = treasures.length;
-        const world = document.getElementById('world');
-        world.innerHTML = '';
-        
-        treasures.forEach(function(item) {
-            const el = document.createElement('div');
-            el.className = 'box';
-            el.dataset.lat = item.lat;
-            el.dataset.lon = item.lon;
-            el.addEventListener('touchstart', async function(e) {
-                e.preventDefault();
-                await _sb.from('treasures').update({ collected: true }).eq('id', item.id);
-                sync();
+        _sb.from('treasures').select('*').eq('collected', false).then(function(res) {
+            if (res.error) { alert("Sync Error: " + res.error.message); return; }
+            treasures = res.data || [];
+            document.getElementById('count').innerText = treasures.length;
+            var world = document.getElementById('world');
+            world.innerHTML = '';
+            treasures.forEach(function(item) {
+                var el = document.createElement('div');
+                el.className = 'box';
+                el.dataset.lat = item.lat; el.dataset.lon = item.lon;
+                el.onclick = function() { _sb.from('treasures').update({ collected: true }).eq('id', item.id).then(sync); };
+                world.appendChild(el);
             });
-            world.appendChild(el);
         });
     }
 
-    // --- SPAWN (Using touchstart for iPad) ---
-    document.getElementById('spawn-btn').addEventListener('touchstart', async function(e) {
-        e.preventDefault();
-        alert("Spawning at current location...");
+    // --- GLOBAL SPAWN FUNCTION ---
+    window.doSpawn = function() {
+        if (myLat === 0) { alert("GPS coordinates not found yet!"); return; }
+        alert("COMMAND RECEIVED: Dropping box...");
         
         if (!_sb) _sb = supabase.createClient(URL, KEY);
-        if (myLat === 0) { alert("GPS not ready!"); return; }
-
-        const { error } = await _sb.from('treasures').insert([{ lat: myLat, lon: myLon, collected: false }]);
-        if (error) alert("Spawn Error: " + error.message);
-        else sync();
-    });
+        _sb.from('treasures').insert([{ lat: myLat, lon: myLon, collected: false }]).then(function(res) {
+            if (res.error) alert("Database Error: " + res.error.message);
+            else { alert("Treasure saved to cloud!"); sync(); }
+        });
+    };
 
     document.getElementById('bStart').onclick = function() {
         document.getElementById('setup').style.display = 'none';
@@ -129,18 +122,16 @@
 
     function loop() {
         if (!active) return;
-        const ww = window.innerWidth, wh = window.innerHeight, fov = ww / 60;
-        const worldBoxes = document.querySelectorAll('.box');
+        var ww = window.innerWidth, wh = window.innerHeight, fov = ww / 60;
+        var worldBoxes = document.querySelectorAll('.box');
         worldBoxes.forEach(function(t) {
-            const tLat = parseFloat(t.dataset.lat), tLon = parseFloat(t.dataset.lon);
-            const dy = Math.sin((tLon-myLon)*Math.PI/180) * Math.cos(tLat*Math.PI/180);
+            var tLat = parseFloat(t.dataset.lat), tLon = parseFloat(t.dataset.lon);
+            var dy = Math.sin((tLon-myLon)*Math.PI/180) * Math.cos(tLat*Math.PI/180);
             const dx = Math.cos(myLat*Math.PI/180)*Math.sin(tLat*Math.PI/180) - Math.sin(myLat*Math.PI/180)*Math.cos(tLat*Math.PI/180)*Math.cos((tLon-myLon)*Math.PI/180);
-            const bearing = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
-
-            let diff = bearing - myHdg;
+            var bearing = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+            var diff = bearing - myHdg;
             while (diff < -180) diff += 360;
             while (diff > 180) diff -= 360;
-
             t.style.left = (ww/2) + (diff * fov) + "px";
             t.style.top = (wh/2) + "px";
             t.style.display = Math.abs(diff) > 40 ? 'none' : 'flex';
