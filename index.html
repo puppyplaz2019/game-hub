@@ -1,119 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>5-D RADAR</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>5-D | POKEMON STYLE</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: monospace; overflow: hidden; }
-        #camera-bg { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-        #setup { position: fixed; inset: 0; background: #000; z-index: 100; text-align: center; padding-top: 50px; }
-        .btn { width: 80%; padding: 20px; margin: 10px; border: 2px solid #0ff; background: #111; color: #0ff; font-weight: bold; border-radius: 10px; -webkit-appearance: none; }
-        #hud { position: fixed; top: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.8); z-index: 50; display: none; align-items: center; justify-content: space-around; border-bottom: 1px solid #0ff; }
-        #world { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
-        .pokemon-box { position: absolute; width: 100px; height: 100px; background: gold; border: 3px solid #fff; display: flex; justify-content: center; align-items: center; font-size: 50px; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 20px #0ff; pointer-events: auto; }
-        .pokemon-box:after { content: '🎁'; }
-        #debug { position: fixed; bottom: 0; width: 100%; font-size: 11px; color: #0f0; background: rgba(0,0,0,0.5); text-align: center; z-index: 60; padding: 5px; }
+        body { background: #000; color: #0f0; font-family: monospace; text-align: center; margin: 0; overflow: hidden; }
+        #radar-circle { width: 300px; height: 300px; border: 2px solid #0f0; border-radius: 50%; margin: 50px auto; position: relative; background: radial-gradient(circle, #030 0%, #000 100%); }
+        #sweep { position: absolute; width: 150px; height: 2px; background: #0f0; top: 150px; left: 150px; transform-origin: left; animation: scan 2s linear infinite; }
+        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .blip { position: absolute; width: 20px; height: 20px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 10px #fff; }
+        #controls { position: fixed; bottom: 20px; width: 100%; }
+        .btn { padding: 25px; width: 80%; background: #0f0; color: #000; font-weight: bold; border: none; border-radius: 10px; font-size: 20px; -webkit-appearance: none; }
+        #status { padding: 10px; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<video id="camera-bg" autoplay playsinline muted></video>
+    <h1>5-D RADAR SYSTEM</h1>
+    <div id="status">INITIALIZING...</div>
 
-<div id="setup">
-    <h1 style="color:#0ff">5-D POKÉ-BOOT</h1>
-    <button class="btn" onclick="fnCam()">1. START CAMERA</button>
-    <button class="btn" onclick="fnSens()">2. START GYRO</button>
-    <button id="bStart" class="btn" style="display:none; border-color:#0f0; color:#0f0;" onclick="fnStart()">3. ENTER WORLD</button>
-</div>
+    <div id="radar-circle">
+        <div id="sweep"></div>
+        <div id="target-layer"></div>
+    </div>
 
-<div id="hud">
-    <div>NEARBY: <span id="count">0</span></div>
-    <button style="background:#0ff; border:none; padding:10px; font-weight:bold;" onclick="fnSpawn()">+ DROP HERE</button>
-</div>
-
-<div id="world"></div>
-<div id="debug">Waiting...</div>
+    <div id="controls">
+        <button class="btn" onclick="dropTarget()">DROP TREASURE HERE</button>
+    </div>
 
 <script>
-    var myHdg = 0, treasures = [], active = false;
+    var hdg = 0;
+    var targets = [];
 
-    function fnCam() {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-        .then(function(s) {
-            document.getElementById('camera-bg').srcObject = s;
-            document.getElementById('debug').innerText = "Camera Active";
-            fnCheck();
-        });
+    // Simple sensor check
+    window.addEventListener('deviceorientation', function(e) {
+        hdg = e.webkitCompassHeading || (360 - e.alpha) || 0;
+        document.getElementById('status').innerText = "BEARING: " + Math.floor(hdg) + "°";
+    }, true);
+
+    function dropTarget() {
+        // Save the direction you are currently facing
+        targets.push(hdg);
+        alert("TARGET LOCKED AT " + Math.floor(hdg) + "°");
+        render();
     }
 
-    function fnSens() {
-        if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) {
-            DeviceOrientationEvent.requestPermission();
-        }
-        window.addEventListener('deviceorientation', function(e) {
-            // This is the "Compass" Pokemon Go uses
-            myHdg = e.webkitCompassHeading || (360 - e.alpha) || 0;
-            document.getElementById('debug').innerText = "HEADING: " + Math.floor(myHdg) + "°";
-        }, true);
-        fnCheck();
-    }
-
-    function fnCheck() {
-        document.getElementById('bStart').style.display = "block";
-    }
-
-    function fnSpawn() {
-        // Just save the direction you are facing
-        treasures.push({ bearing: myHdg });
-        fnUpdate();
-    }
-
-    function fnUpdate() {
-        var w = document.getElementById('world');
-        w.innerHTML = '';
-        document.getElementById('count').innerText = treasures.length;
-        
-        for (var i = 0; i < treasures.length; i++) {
+    function render() {
+        var layer = document.getElementById('target-layer');
+        layer.innerHTML = '';
+        for (var i = 0; i < targets.length; i++) {
             var el = document.createElement('div');
-            el.className = 'pokemon-box';
-            el.setAttribute('data-bearing', treasures[i].bearing);
-            el.onclick = function() { this.remove(); };
-            w.appendChild(el);
+            el.className = 'blip';
+            el.setAttribute('data-b', targets[i]);
+            layer.appendChild(el);
         }
     }
 
-    function fnStart() {
-        document.getElementById('setup').style.display = 'none';
-        document.getElementById('hud').style.display = 'flex';
-        active = true;
-        fnLoop();
-    }
-
-    function fnLoop() {
-        if (!active) return;
-        var ww = window.innerWidth;
-        var wh = window.innerHeight;
-        var fov = ww / 60; // Field of view
-        
-        var boxes = document.getElementsByClassName('pokemon-box');
-        for (var i = 0; i < boxes.length; i++) {
-            var t = boxes[i];
-            var b = parseFloat(t.getAttribute('data-bearing'));
-            
-            var diff = b - myHdg;
+    function loop() {
+        var blips = document.getElementsByClassName('blip');
+        for (var i = 0; i < blips.length; i++) {
+            var b = parseFloat(blips[i].getAttribute('data-b'));
+            var diff = b - hdg;
             while (diff < -180) diff += 360;
             while (diff > 180) diff -= 360;
 
-            // Move it horizontally based on the compass
-            t.style.left = (ww/2) + (diff * fov) + "px";
-            t.style.top = (wh/2) + "px";
+            // Math to place on the circle
+            var angle = (diff - 90) * (Math.PI / 180);
+            var x = 150 + 120 * Math.cos(angle);
+            var y = 150 + 120 * Math.sin(angle);
 
-            // Hide if it's behind you
-            t.style.display = Math.abs(diff) > 30 ? 'none' : 'flex';
+            blips[i].style.left = x + "px";
+            blips[i].style.top = y + "px";
+            
+            // Only bright when you face it
+            blips[i].style.opacity = Math.abs(diff) < 20 ? "1" : "0.3";
         }
-        requestAnimationFrame(fnLoop);
+        requestAnimationFrame(loop);
     }
+    loop();
 </script>
 </body>
 </html>
