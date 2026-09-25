@@ -152,8 +152,6 @@
             letter-spacing: 2px;
         }
 
-        .sole-glow { box-shadow: 0 0 15px rgba(0, 255, 255, 0.1); border: 1px solid var(--accent); }
-
         .new-badge { 
             position: absolute; 
             top: 10px; 
@@ -203,7 +201,7 @@
         </div>
         <button id="bundle-btn" class="bundle-btn" onclick="buyBundle()">UNLEASH ALL COLORS (1000 ♪)</button>
         <div style="margin-top:25px; color:var(--esofa-gold); font-size: 14px; font-weight: bold;">
-            🏆 ESCAPE: <span id="best-dist">0</span>m | ⚔️ SOLE POWER: <span id="soul-best">0</span>
+            🏆 ESCAPE: <span id="best-dist">0</span>m
         </div>
     </div>
 
@@ -232,13 +230,11 @@
         const notes = parseInt(localStorage.getItem('notes_collected') || 0);
         const skinName = localStorage.getItem('active_skin_name') || "Blue";
         const bestScore = parseInt(localStorage.getItem('sanco_best') || 0);
-        const soulBest = localStorage.getItem('soul_best_wave') || 0;
         const purchased = JSON.parse(localStorage.getItem('purchased_skins') || '["Blue"]');
         
         document.getElementById('p-notes').innerText = notes.toLocaleString();
         document.getElementById('p-skin').innerText = skinName.toUpperCase();
         document.getElementById('best-dist').innerText = Math.floor(bestScore / 10);
-        document.getElementById('soul-best').innerText = soulBest;
 
         ALL_SKINS.forEach(s => {
             const tag = document.getElementById('tag-' + s);
